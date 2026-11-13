@@ -489,7 +489,7 @@ let DAYS=[
  links:[{l:'🗺️ Tarde: Central Park',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Gapstow+Bridge,+New+York,+NY/Wollman+Rink,+New+York,+NY/The+Mall,+Central+Park,+New+York,+NY/Bethesda+Terrace,+New+York,+NY/Bow+Bridge,+Central+Park,+New+York,+NY/72+St+Station+(B,C),+New+York,+NY/data=!4m2!4m1!3e2'},
         {l:'🗺️ Noche: Hell\'s Kitchen → Times Square',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/9th+Ave+%26+W+50th+St,+New+York,+NY/Times+Square,+New+York,+NY/data=!4m2!4m1!3e2'}]},
 {id:'sabado',short:'SÁB<br>19',tab:'Sáb 19',date:'Sábado 19 de diciembre',title:'High Line, Flatiron, Summit y Navidad en Midtown',color:'#FFCE36',km:'~7 km',walk:'~1:45 h',cost:'US$110–150',
- hoods:['Hudson Yards','Chelsea','Meatpacking','Flatiron','Midtown','5th Ave','Koreatown'],
+ hoods:['Hudson Yards','Chelsea','Meatpacking','Flatiron','Midtown','5th Ave','Theater District'],
  tip:'Arranquen 9:30–10: el High Line y Chelsea Market se llenan cerca del mediodía un sábado. Con cochecito, en el Rockefeller y Saks que alguien vaya adelante abriendo camino.',
  stops:[
  {t:'9:30',n:'Salida del hotel',i:'🏨',x:'Caminando hacia Hudson Yards (~12 min).',ll:HOTEL},
@@ -503,15 +503,16 @@ let DAYS=[
  {t:'17:00',n:'Grand Central Terminal',i:'🚉',d:'30 min',c:'Gratis',x:'La bóveda celeste y la galería de los susurros (abajo, frente al Oyster Bar).',ll:[40.7527,-73.9772],m:'walk'},
  {t:'17:45',n:'Árbol del Rockefeller Center',i:'🎄',d:'40 min',c:'Gratis',x:'El árbol más famoso del mundo, con la pista de patinaje abajo. Suben por 5th Ave.',ll:[40.7587,-73.9787],m:'walk',via:[[40.7545,-73.9800]]},
  {t:'18:30',n:'Luces de Saks + vidrieras de 5th Ave',i:'✨',d:'30 min',c:'Gratis',x:'Show de luces en la fachada cada pocos minutos.',ll:[40.7580,-73.9772],m:'walk'},
- {t:'19:15',n:'Hotel · pausa',i:'🛏️',d:'1:30 h',x:'Vuelta pasando por Times Square iluminado. Los amigos acuestan a la nena; ustedes se cambian.',ll:HOTEL,m:'walk',via:[[40.7598,-73.9800],[40.7580,-73.9855]]},
- {t:'20:30',n:"Vidrieras navideñas de Macy's",i:'🎁',d:'25 min',c:'Gratis',x:'Subte a 34 St–Herald Sq. Las vidrieras navideñas más famosas de NY, en la tienda más grande del país. De ahí, 2 cuadras a Koreatown.',ll:[40.7508,-73.9890],m:'subway',via:[[40.7573,-73.9898],[40.7497,-73.9877]]},
- {t:'21:00',n:'Cena en Koreatown',i:'🥩',d:'1:30 h',c:'US$40–60',x:'La calle 32 entre 5th Ave y Broadway: parrilla coreana, karaoke y movimiento hasta la madrugada.',ll:[40.7477,-73.9867],m:'walk'}
+ {t:'19:00',n:"Vidrieras navideñas de Macy's",i:'🎁',d:'25 min',c:'US$3 subte',x:'Subte B/D/F/M desde 47–50 Sts–Rockefeller hasta 34 St–Herald Sq. Las vidrieras navideñas más famosas de NY, en la tienda más grande del país.',ll:[40.7508,-73.9890],m:'subway',via:[[40.7586,-73.9813],[40.7497,-73.9877]]},
+ {t:'19:30',n:'Hotel · pausa',i:'🛏️',d:'1:30 h',c:'US$3',x:'Subte A/C/E de 34 St–Penn Station a 42 St. Los amigos acuestan a la nena; ustedes se cambian.',ll:HOTEL,m:'subway',via:[[40.7522,-73.9932],[40.7573,-73.9898]]},
+ {t:'21:00',n:'Cena en Restaurant Row',i:'🍝',d:'1:30 h',c:'US$40–60',x:'La calle 46 entre 8th y 9th Ave, a 5 minutos del hotel: trattorias y bistrós tranquilos para una cena relajada, todos juntos.',ll:[40.7598,-73.9885],m:'walk'}
  ],
  links:[{l:'🗺️ Mañana: High Line → Chelsea Market',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/The+Vessel,+New+York,+NY/High+Line+23rd+St+Entrance,+New+York,+NY/High+Line+Gansevoort+St+Entrance,+New+York,+NY/Little+Island,+New+York,+NY/Chelsea+Market,+New+York,+NY/data=!4m2!4m1!3e2'},
         {l:'🗺️ Chelsea Market → Flatiron',u:G+'Chelsea+Market,+New+York,+NY/Flatiron+Building,+New+York,+NY/data=!4m2!4m1!3e2'},
         {l:'🚇 Flatiron → Bryant Park',u:G+'23+St+Station+(F,M),+New+York,+NY/Bryant+Park,+New+York,+NY/data=!4m2!4m1!3e3'},
         {l:'🗺️ Tarde: Summit → Navidad → Hotel',u:G+'Bryant+Park+Winter+Village,+New+York,+NY/Summit+One+Vanderbilt,+New+York,+NY/Grand+Central+Terminal,+New+York,+NY/Rockefeller+Center+Christmas+Tree,+New+York,+NY/Saks+Fifth+Avenue,+New+York,+NY/Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/data=!4m2!4m1!3e2'},
-        {l:'🚇 Noche: Koreatown',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Koreatown,+W+32nd+St,+New+York,+NY/data=!4m2!4m1!3e3'}]},
+        {l:'🚇 Saks → Macy\'s',u:G+'Saks+Fifth+Avenue,+New+York,+NY/Macy%27s+Herald+Square,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Noche: hotel → Restaurant Row',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/W+46th+St+%26+8th+Ave,+New+York,+NY/data=!4m2!4m1!3e2'}]},
 {id:'domingo',short:'DOM<br>20',tab:'Dom 20',date:'Domingo 20 de diciembre',title:'Museo de Historia Natural + Harry Potter',color:'#00A896',km:'',walk:'',cost:'US$110–150',
  hoods:['Upper West Side','Central Park'],
  tip:'Mañana bajo techo con la nena (ideal si hace mucho frío): dinosaurios y la ballena azul. Reserven las entradas online para entrar a las 10. A la tarde descanso y a la noche, la obra.',
@@ -564,7 +565,7 @@ let DAYS=[
         {l:'🚇 Noche: hotel → Washington Sq',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Washington+Square+Park,+New+York,+NY/data=!4m2!4m1!3e3'},
         {l:'🗺️ Noche: Village → Joe y Cellar Dog',u:G+'Washington+Square+Park,+New+York,+NY/Bleecker+St+%26+Christopher+St,+New+York,+NY/66+Perry+St,+New+York,+NY/17+Grove+St,+New+York,+NY/75+1%2F2+Bedford+St,+New+York,+NY/Cherry+Lane+Theatre,+38+Commerce+St,+New+York,+NY/Joe%27s+Pizza,+7+Carmine+St,+New+York,+NY/Cellar+Dog,+75+Christopher+St,+New+York,+NY/data=!4m2!4m1!3e2'}]},
 {id:'martes',short:'MAR<br>22',tab:'Mar 22',date:'Martes 22 de diciembre',title:'Downtown, Katz\'s, Puente de Brooklyn y luces de Navidad',color:'#7FB5E8',km:'~10 km',walk:'~2:30 h',cost:'US$120–160',
- hoods:['Financial District','Tribeca','Lower East Side','Chinatown','DUMBO','Dyker Heights'],
+ hoods:['Financial District','Tribeca','Lower East Side','Chinatown','DUMBO','Dyker Heights','Koreatown'],
  tip:'En el ferry vayan del lado derecho a la ida para ver la Estatua de cerca. El puente, mejor cruzarlo de Manhattan hacia Brooklyn: el skyline queda a la vuelta.',
  stops:[
  {t:'9:00',n:'Salida del hotel',i:'🏨',ll:HOTEL},
@@ -582,11 +583,11 @@ let DAYS=[
  {t:'16:20',n:'Brooklyn Bridge Park · Pier 1',i:'🌅',d:'40 min',c:'Gratis',x:'Atardecer con el skyline de Manhattan enfrente.',ll:[40.7010,-73.9960],m:'walk'},
  {t:'17:00',n:"Merienda en Juliana's",i:'🍕',d:'45 min',c:'US$15–25',x:'Una pizza para compartir y entrar en calor.',ll:[40.7024,-73.9932],m:'walk'},
  {t:'18:15',n:'Dyker Heights · luces de Navidad',i:'🎅',d:'1:30 h + viaje',c:'US$3',x:'Subte R desde Court St hasta 86 St. Casas decoradas a otro nivel: recorran las calles 83 a 86 entre 11th y 13th Ave.',ll:[40.6228,-74.0108],m:'subway',opt:true,via:[[40.6941,-73.9918],[40.6600,-74.0000],[40.6226,-74.0282]]},
- {t:'20:45',n:'Cena en Restaurant Row',i:'🍽️',d:'1:30 h',c:'US$40–60',x:'Subte R directo hasta 49 St. La calle 46 entre 8th y 9th Ave, llena de restaurantes, a 5 minutos del hotel.',ll:[40.7598,-73.9885],m:'subway',via:[[40.6226,-74.0282],[40.6941,-73.9918],[40.7598,-73.9842]]}
+ {t:'20:45',n:'Cena en Koreatown',i:'🥩',d:'1:30 h',c:'US$40–60',x:'Subte R directo hasta 34 St–Herald Sq. La calle 32 entre 5th Ave y Broadway: parrilla coreana, karaoke y movimiento hasta tarde. Vuelta al hotel: 10 min en subte.',ll:[40.7477,-73.9867],m:'subway',via:[[40.6226,-74.0282],[40.6941,-73.9918],[40.7497,-73.9877]]}
  ],
  links:[{l:'🚇 Subte al ferry',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Whitehall+Terminal,+New+York,+NY/data=!4m2!4m1!3e3'},
         {l:'🚇 Noche: DUMBO → Dyker Heights',u:G+'Juliana%27s+Pizza,+Brooklyn,+NY/84th+St+%26+12th+Ave,+Brooklyn,+NY/data=!4m2!4m1!3e3'},
-        {l:'🚇 Dyker Heights → Restaurant Row',u:G+'84th+St+%26+12th+Ave,+Brooklyn,+NY/W+46th+St+%26+8th+Ave,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🚇 Dyker Heights → Koreatown',u:G+'84th+St+%26+12th+Ave,+Brooklyn,+NY/Koreatown,+W+32nd+St,+New+York,+NY/data=!4m2!4m1!3e3'},
         {l:'🗺️ Mañana: Ferry → Tribeca',u:G+'Whitehall+Terminal,+New+York,+NY/The+Battery,+New+York,+NY/Charging+Bull,+New+York,+NY/Wall+Street,+New+York,+NY/9%2F11+Memorial,+New+York,+NY/Oculus,+New+York,+NY/Ghostbusters+Firehouse,+14+N+Moore+St,+New+York,+NY/data=!4m2!4m1!3e2'},
         {l:'🚇 Tribeca → Katz\'s',u:G+'Ghostbusters+Firehouse,+14+N+Moore+St,+New+York,+NY/Katz%27s+Delicatessen,+205+E+Houston+St,+New+York,+NY/data=!4m2!4m1!3e3'},
         {l:'🗺️ Tarde: Katz\'s → Puente → DUMBO',u:G+'Katz%27s+Delicatessen,+205+E+Houston+St,+New+York,+NY/Brooklyn+Bridge+Pedestrian+Entrance,+Centre+St,+New+York,+NY/Washington+St+%26+Water+St,+Brooklyn,+NY/Brooklyn+Bridge+Park+Pier+1,+Brooklyn,+NY/data=!4m2!4m1!3e2'}]},
