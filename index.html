@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nueva York · 18–23 dic · Mapa del viaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..900&family=Bungee&family=Bungee+Inline&family=Limelight&family=Calistoga&family=Gochi+Hand&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1e;--panel:#10172b;--card:#161f38;--line:#24304f;--text:#e9eefb;--muted:#9aa6c4;--c:#ffd166}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:'Archivo',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{padding:16px 18px 10px;background:linear-gradient(180deg,#121214,#0a0b10);box-shadow:inset 0 4px 0 #f2f2f2;border-bottom:1px solid #26262c;flex:none}
+.tabrow{display:flex;align-items:center;gap:10px;margin-top:10px}.tabrow .tabs{margin-top:0;flex:1;min-width:0}
+.who{flex:none;border:1px dashed #44444f;background:transparent;color:#cfd3e0;border-radius:999px;padding:6px 12px;font:700 12px 'Archivo',sans-serif;font-stretch:85%;letter-spacing:.04em;cursor:pointer;white-space:nowrap}
+.who b{color:#f7c600}
+.who:hover{border-color:#f7c600}
+#picker{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at center,#1a1f3aee,#05070ff5);display:none;align-items:center;justify-content:center;padding:20px}
+#picker.on{display:flex}
+.pbox{text-align:center;max-width:620px;width:100%}
+.ptitle{font:400 30px 'Bungee',sans-serif;color:#fff;margin-bottom:6px}
+.pbox p{color:#9aa6c4;margin:0 0 24px;font-size:15px}
+.pcards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pcard{background:#121827;border:2px solid #2a3350;border-radius:20px;padding:26px 16px;cursor:pointer;color:#fff;transition:.25s;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Archivo',sans-serif}
+.pcard:hover{border-color:#f7c600;transform:translateY(-4px);box-shadow:0 18px 40px -12px #f7c60055}
+.pcard span{font-size:64px;line-height:1}
+.pcard b{font:400 24px 'Bungee',sans-serif}
+.pcard small{color:#9aa6c4;font-size:13px}
+@media (max-width:520px){.pcards{grid-template-columns:1fr}.pcard span{font-size:44px}}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.search{position:relative;margin-left:auto;width:min(340px,100%);z-index:20}
+.search input{width:100%;background:#1a1a20;border:1px solid #33333d;color:#fff;border-radius:999px;padding:9px 14px;font:600 14px 'Archivo',sans-serif;font-stretch:90%;outline:none;transition:.2s}
+.search input:focus{border-color:#f7c600;box-shadow:0 0 0 3px #f7c60033}
+.res{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#121217;border:1px solid #33333d;border-radius:14px;overflow:hidden;display:none;box-shadow:0 18px 40px #000a;max-height:60vh;overflow-y:auto}
+.res.on{display:block}
+.res a{display:flex;align-items:center;gap:10px;padding:9px 12px;color:#fff;text-decoration:none;cursor:pointer;border-bottom:1px solid #222228}
+.res a:hover,.res a.sel{background:#1f1f27}
+.res a .bullet{flex:none}
+.res a small{display:block;color:#9aa0b4;font-size:12px;font-weight:500}
+.res a b{font-weight:800;font-stretch:88%}
+.res .none{padding:12px;color:#9aa0b4;font-size:13px}
+@media (max-width:860px){.search{width:100%;margin-left:0}}
+.brand h1{font-family:'Bungee',sans-serif;font-weight:400;font-size:24px;margin:0;letter-spacing:.01em;color:#fff}
+.brand h1 span{font-family:'Bungee Inline',sans-serif;color:#f7c600}
+.brand small{font-stretch:85%;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.brand small{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:#121a31;color:var(--muted);padding:7px 12px;border-radius:999px;font:700 13px/1 'Archivo',sans-serif;font-stretch:82%;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 13px 5px 5px;transition:.2s}
+.tab i{width:9px;height:9px;border-radius:50%;background:var(--tc);box-shadow:0 0 8px var(--tc)}
+.tab:hover{color:var(--text);border-color:#3a4870}
+.tab.on{background:#f2f2f2;color:#0a0f1e;border-color:#f2f2f2}
+.bullet{width:26px;height:26px;border-radius:50%;background:var(--tc);color:#0a0f1e;display:grid;place-items:center;font:900 12px 'Archivo',sans-serif;font-stretch:100%;letter-spacing:0}
+.tab.on i{background:#0a0f1e;box-shadow:none}
+main{flex:1;display:grid;grid-template-columns:1fr 420px;min-height:0}
+#mapwrap{position:relative;overflow:hidden;background:#070d1d;touch-action:none;cursor:grab;
+ --land:#18223d;--landS:#2b3a62;--manh:#1d2950;--manhS:#3a4c80;--park:#1d4a3a;--parkS:#2c6b53;--res:#14335e;--street:#2f3d68;--bridge:#8da0d4;--wl:#5f7fb8;--bl:#7c8bb3;--hl:#c3cdea;--sub:#dfe8ff;--fer:#5ee7ff;--case:#000;--lights:1}
+#mapwrap.t-day{--land:#efe9dc;--landS:#d6cbb4;--manh:#fbf7ee;--manhS:#cdbf9f;--park:#b7dc9f;--parkS:#86bd6c;--res:#8cc6ee;--street:#e3d8c2;--bridge:#8a8f9e;--wl:#3b78b4;--bl:#8b7d63;--hl:#5e5545;--sub:#3b4670;--fer:#0a7fc2;--case:#1b2440;--lights:0}
+#mapwrap.t-dusk{--land:#4a3a5e;--landS:#6e5680;--manh:#5b4670;--manhS:#8a6e9c;--park:#486a58;--parkS:#5f8a70;--res:#6d5a9a;--street:#7a6290;--bridge:#f4c8a8;--wl:#ffd2b0;--bl:#f1c6d8;--hl:#ffe7d6;--sub:#fff1e6;--fer:#9ff2ff;--case:#2a1838;--lights:.55}
+.skyfx{position:absolute;inset:0;pointer-events:none}
+.tint{position:absolute;inset:0;pointer-events:none;z-index:1}
+.sun{position:absolute;width:0;height:0;pointer-events:none;z-index:1;mix-blend-mode:screen}
+.sun i{position:absolute;left:-90px;top:-90px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--sc1) 0%,var(--sc2) 22%,var(--sc3) 45%,rgba(255,180,90,0) 70%);transform:scale(var(--ss,1));animation:sunpulse 6s ease-in-out infinite}
+@keyframes sunpulse{50%{filter:brightness(1.12)}}
+.t-day .sun{mix-blend-mode:normal}
+.t-day .sun i{opacity:.72}
+.sun:before{content:"";position:absolute;left:-130px;top:-130px;width:260px;height:260px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,236,150,.32) 0deg 6deg,transparent 6deg 22deg);-webkit-mask:radial-gradient(circle,transparent 26%,#000 34%,transparent 70%);mask:radial-gradient(circle,transparent 26%,#000 34%,transparent 70%);animation:spin 60s linear infinite;opacity:0;transition:opacity 3s}
+.t-day .sun:before{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.moon{position:absolute;width:46px;height:46px;border-radius:50%;pointer-events:none;box-shadow:inset -12px -4px 0 0 #f4f1e1;filter:drop-shadow(0 0 16px #f4f1e1aa);z-index:1}
+#fx{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.fx-title{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);font:400 28px 'Limelight',serif;color:#ffe7a3;text-shadow:0 0 18px #ffcf5a,0 0 40px #b98cff;white-space:nowrap;opacity:0;animation:fxin 2.5s 0.5s forwards}
+@keyframes fxin{to{opacity:1}}
+.candle{position:absolute;width:8px;height:30px;border-radius:2px;background:linear-gradient(#fffaf0,#e8dcc0);box-shadow:0 0 10px #ffd27a66;animation:float var(--d) ease-in-out infinite alternate;opacity:0;transition:opacity 2s}
+.candle:before{content:"";position:absolute;left:50%;top:-14px;width:9px;height:15px;margin-left:-4.5px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(ellipse at 50% 70%,#fff 0%,#ffd45a 40%,#ff8a2a 75%,transparent 80%);filter:drop-shadow(0 0 8px #ffb347);animation:flick .18s infinite alternate}
+.candle:after{content:"";position:absolute;left:50%;top:-30px;width:60px;height:60px;margin-left:-30px;border-radius:50%;background:radial-gradient(circle,#ffcf6a44,transparent 70%)}
+@keyframes float{from{transform:translateY(-10px)}to{transform:translateY(12px)}}
+@keyframes flick{from{transform:scaleY(1) rotate(-2deg)}to{transform:scaleY(1.12) rotate(2deg)}}
+.owl{position:absolute;font-size:38px;left:-80px;top:22%;animation:owlfly 14s linear infinite;filter:drop-shadow(0 4px 8px #0008)}
+.owl span{font-size:20px;position:absolute;left:18px;top:34px}
+@keyframes owlfly{0%{transform:translate(0,0)}25%{transform:translate(30vw,-30px)}50%{transform:translate(60vw,20px)}75%{transform:translate(90vw,-20px)}100%{transform:translate(120vw,10px)}}
+.bolt{position:absolute;font-size:120px;left:50%;top:40%;transform:translate(-50%,-50%) scale(.3);opacity:0;animation:bolt 3.5s ease-out forwards;filter:drop-shadow(0 0 30px #ffd84a)}
+@keyframes bolt{15%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}30%{transform:translate(-50%,-50%) scale(1)}70%{opacity:.9}100%{opacity:0;transform:translate(-50%,-60%) scale(1.3)}}
+.vignette{position:absolute;inset:0;opacity:0;animation:fxin 3s forwards}
+.vignette.magic{background:radial-gradient(ellipse at center,transparent 35%,#2a0f4a99 100%)}
+.vignette.summit{background:radial-gradient(ellipse at center,transparent 40%,#c9d6ee55 100%)}
+.balloon{position:absolute;bottom:-90px;width:46px;height:54px;border-radius:50% 50% 48% 48%/55% 55% 45% 45%;background:radial-gradient(circle at 32% 28%,#ffffff 0%,#e9edf3 12%,#aab3c2 45%,#6d7686 80%,#4a5160 100%);box-shadow:inset -6px -8px 14px #0004,0 6px 18px #0005;animation:rise var(--d) linear infinite;animation-delay:var(--dl)}
+.balloon:after{content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:6px;margin-left:-3px;background:#8c94a3;transform:rotate(45deg)}
+@keyframes rise{0%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(25px,-60vh) rotate(4deg)}100%{transform:translate(-10px,-125vh) rotate(-3deg)}}
+.sheen{position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 42%,#ffffff55 48%,#ffffffaa 50%,#ffffff55 52%,transparent 58%);animation:sheen 6s ease-in-out infinite;mix-blend-mode:screen}
+@keyframes sheen{0%{transform:translateX(-60%)}60%,100%{transform:translateX(60%)}}
+.mirror{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#ffffff00 0 120px,#ffffff10 120px 122px);mix-blend-mode:overlay;opacity:0;animation:fxin 3s forwards}
+.alti{position:absolute;right:62px;top:50%;transform:translateY(-50%);background:#0f1730e6;border:1px solid #c9d6ee;border-radius:14px;padding:10px 14px;text-align:center;color:#fff;font:800 11px 'Archivo';font-stretch:80%;letter-spacing:.12em;text-transform:uppercase}
+.alti b{display:block;font:400 26px 'Bungee',sans-serif;color:#e8eef9;letter-spacing:0;margin-top:2px}
+@media (prefers-reduced-motion:reduce){.owl,.balloon,.sheen{animation:none;display:none}}
+.tod{position:absolute;left:14px;top:60px;z-index:3;font:700 12px 'Archivo',sans-serif;font-stretch:85%;letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;background:#0f1730e6;border:1px solid #33416b;color:#fff;transition:.4s}
+.land,.manh,.park,.res,.street,.bridge{transition:fill 3s ease,stroke 3s ease}
+.water-lbl,.boro-lbl,.hood-lbl{transition:fill 3s ease,opacity .3s}
+#lights{opacity:var(--lights);transition:opacity 3s}
+#mapwrap.drag{cursor:grabbing}
+#map{position:absolute;inset:0;width:100%;height:100%;display:block}
+#snow{position:absolute;inset:0;pointer-events:none}
+aside{background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 18px 40px;scroll-behavior:smooth}
+/* map styles */
+.water-lbl{fill:var(--wl);font:italic 600 14px 'Archivo',serif;font-stretch:75%;letter-spacing:.18em;opacity:.8}
+.boro-lbl{fill:var(--bl);font:400 12px 'Bungee',sans-serif;letter-spacing:.3em;text-transform:uppercase;opacity:.6}
+.hood-lbl{fill:var(--hl);font:800 10px 'Archivo',sans-serif;font-stretch:70%;letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+.hoods-off .hood-lbl{opacity:0}
+.land{fill:var(--land);stroke:var(--landS);stroke-width:calc(1px*var(--s))}
+.manh{fill:var(--manh);stroke:var(--manhS);stroke-width:calc(1.2px*var(--s))}
+.park{fill:var(--park);stroke:var(--parkS);stroke-width:calc(1px*var(--s))}
+.res{fill:var(--res)}
+.street{fill:none;stroke:var(--street);stroke-width:calc(1.4px*var(--s));stroke-linecap:round;opacity:.8}
+.bridge{fill:none;stroke:var(--bridge);stroke-width:calc(2px*var(--s));stroke-linecap:round;opacity:.55}
+.light{fill:#ffd98a;animation:tw 3s infinite ease-in-out;r:calc(1.6px*var(--s))}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.85}}
+.leg{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.leg.walk{stroke:var(--dc);stroke-width:calc(4px*var(--s))}
+.leg.subway{stroke:var(--sub);stroke-width:calc(2.6px*var(--s));stroke-dasharray:calc(6px*var(--s)) calc(6px*var(--s));opacity:.85}
+.leg.tram{stroke:#ff7eb6;stroke-width:calc(3px*var(--s));stroke-dasharray:calc(1px*var(--s)) calc(5px*var(--s))}
+.leg.ferry{stroke:var(--fer);stroke-width:calc(3px*var(--s));stroke-dasharray:calc(2px*var(--s)) calc(7px*var(--s))}
+.leg.glow{stroke-width:calc(11px*var(--s));opacity:.22;filter:blur(calc(3px*var(--s)))}
+.t-day .leg.glow{stroke:var(--case);stroke-width:calc(7px*var(--s));opacity:.45;filter:none}
+.t-day .ov-dot circle,.t-day .mk .dot{stroke:#1b2440}
+.leg.dim{opacity:.55}
+.dist{opacity:0;transition:opacity .8s;pointer-events:none}
+.dist.on{opacity:1}.dist.on.tiny{opacity:0}
+.dist rect{fill:#0f1730ee;stroke:var(--dc);stroke-width:1.2}
+.t-day .dist rect{fill:#ffffffee;stroke:#1b2440}
+.dist text{fill:#fff;font:800 11px 'Archivo',sans-serif;font-stretch:85%;text-anchor:middle;dominant-baseline:central}
+.t-day .dist text{fill:#1b2440}
+.mk{cursor:pointer}
+.pin{transform:scale(0);transform-box:fill-box;transform-origin:center;transition:transform .9s cubic-bezier(.34,1.56,.64,1)}
+.mk.show .pin{transform:scale(1)}
+.mk .halo{fill:var(--dc);opacity:0}
+.mk.active .halo{animation:pulse 1.6s infinite}
+@keyframes pulse{0%{opacity:.6;r:12}100%{opacity:0;r:30}}
+.mk .dot{fill:var(--dc);stroke:#0a0f1e;stroke-width:2.5}
+.mk .num{fill:#0a0f1e;font:900 11px 'Archivo',sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mk .lbl{opacity:0;transition:opacity .2s;pointer-events:none}
+.mk:hover .lbl,.mk.active .lbl{opacity:1}
+.mk .lbl rect{fill:#0a0f1ee6;stroke:var(--dc);stroke-width:1}
+.mk .lbl text{fill:#fff;font:700 12.5px 'Archivo',sans-serif;font-stretch:88%;dominant-baseline:central}
+.mk.opt .dot{stroke-dasharray:3 2;stroke:#fff}
+.ov-dot{cursor:pointer}
+.ov-dot circle{fill:var(--dc);stroke:#0a0f1e;stroke-width:2}
+.walker circle{fill:#fff;filter:drop-shadow(0 0 6px var(--dc))}
+.walker text{font-size:15px;text-anchor:middle;dominant-baseline:central}
+.liberty{font-size:20px;text-anchor:middle;dominant-baseline:central}
+/* overlays */
+.ctrls{position:absolute;left:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap;z-index:3}
+.btn{border:1px solid #33416b;background:#0f1730e6;backdrop-filter:blur(6px);color:var(--text);font:800 12.5px 'Archivo',sans-serif;font-stretch:85%;text-transform:uppercase;letter-spacing:.06em;padding:9px 13px;border-radius:10px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--c);color:#fff}
+.btn.primary{background:var(--c);color:#0a0f1e;border-color:var(--c)}
+.zoom{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:6px;z-index:3}
+.zoom .btn{width:38px;height:38px;padding:0;font-size:18px}
+.legend{position:absolute;left:14px;bottom:14px;background:#0f1730e6;border:1px solid #33416b;border-radius:10px;padding:8px 12px;font-size:12px;color:var(--muted);display:flex;gap:14px;z-index:3;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend b{display:inline-block;width:22px;height:0;border-top:3px solid var(--c)}
+.legend b.sub{border-top:3px dashed #dfe8ff}
+.legend b.fer{border-top:3px dotted #5ee7ff}
+.legend b.tra{border-top:3px dotted #ff7eb6}
+.scalebar{position:absolute;right:14px;bottom:14px;font-size:11px;color:var(--muted);text-align:right;z-index:3}
+.scalebar div{height:6px;border:2px solid var(--muted);border-top:0;margin-top:3px;transition:width .2s}
+.nowcard{position:absolute;left:50%;top:62px;pointer-events:auto;transform:translateX(-50%) translateY(-10px);background:#0f1730f0;border:1px solid var(--c);border-radius:12px;padding:8px 14px;font-size:13px;opacity:0;transition:.35s;z-index:3;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.nowcard:not(.on){pointer-events:none}.nowcard.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.nowcard b{color:var(--c);font-family:'Bungee',sans-serif;font-weight:400}
+.nowcard{font-weight:700;font-stretch:90%}
+/* panel */
+.dayhead{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.dnum{width:56px;height:56px;border-radius:16px;background:var(--c);color:#0a0f1e;display:grid;place-items:center;font:900 15px 'Archivo';font-stretch:90%;flex:none;box-shadow:0 6px 24px -6px var(--c);text-align:center;line-height:1.05}
+.ddate{color:var(--c);font-family:'Bungee',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.dayhead h2{font-family:'Archivo',sans-serif;font-weight:900;font-stretch:72%;font-size:27px;margin:3px 0 0;line-height:1.02;text-transform:uppercase;letter-spacing:.01em}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stats.four{grid-template-columns:repeat(2,1fr);margin-bottom:6px}
+.statnote{font-size:11px;color:#7f8aa8;margin:0 0 12px;line-height:1.4}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.stat b{display:block;font-size:17px;font-weight:900;font-stretch:80%}
+.stat span{color:var(--muted);font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chips span{font-size:12px;padding:4px 10px;border-radius:999px;background:#1b2544;border:1px solid var(--line);color:#cfd7ef}
+.tip{background:linear-gradient(90deg,#1b2544,#161f38);border-left:3px solid var(--c);padding:10px 12px;border-radius:8px;font-size:13px;color:#d5dcf0;margin-bottom:16px;line-height:1.45}
+.tl{list-style:none;margin:0;padding:0;position:relative}
+.tl:before{content:"";position:absolute;left:17px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--c),#24304f)}
+.tl li{position:relative;display:flex;gap:12px;padding:8px 8px 8px 0;border-radius:12px;cursor:pointer;transition:background .2s}
+.tl li:hover{background:#151d36}
+.tl li.hop{display:block;cursor:default;padding:2px 0 2px 50px;font-size:12px;color:var(--muted);background:none!important;font-stretch:90%}
+.tl li.hop b{color:var(--text)}
+.tl li.active{background:#1a2445}
+.tl li.active .badge{box-shadow:0 0 0 4px #0a0f1e,0 0 0 6px var(--c)}
+.tl li.opt{opacity:.85}
+.badge{width:36px;height:36px;flex:none;border-radius:50%;background:var(--c);color:#0a0f1e;display:grid;place-items:center;font-weight:800;font-size:13px;z-index:1;box-shadow:0 0 0 4px var(--panel);transition:box-shadow .2s}
+.badge.nomap{background:#24304f;color:#fff;font-size:16px}
+.body{flex:1;min-width:0}
+.row1{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.time{font-family:'Bungee',sans-serif;font-size:13px;color:var(--c)}
+.mode{font-size:11px;padding:2px 8px;border-radius:999px;background:#24304f;color:#cfd7ef}
+.name{font-weight:800;font-stretch:88%;font-size:16.5px;margin-top:2px}
+.body p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:#c3cdea}
+.photo{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:600;color:#0a0f1e;background:var(--c);padding:5px 11px;border-radius:999px;text-decoration:none;transition:.15s}.photo:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.links{margin-top:20px}
+.links h3,.sec{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.links a{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);padding:10px 12px;border-radius:10px;margin-bottom:6px;font-size:13px;font-weight:600;transition:.15s}
+.links a:hover{border-color:var(--c)}
+.links a span{color:var(--c)}
+.weekgrid{display:flex;flex-direction:column;gap:8px}
+.wcard{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:.2s}
+.wcard:hover{border-color:var(--wc);transform:translateX(3px)}
+.wcard .dnum{width:46px;height:46px;font-size:13px;background:var(--wc);box-shadow:0 6px 20px -8px var(--wc)}
+.wcard h4{margin:0;font-size:16px;font-weight:900;font-stretch:75%;text-transform:uppercase;letter-spacing:.01em}
+.wcard p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.hero{font-family:'Limelight',serif;font-weight:400;font-size:27px;margin:0 0 8px;line-height:1.15}
+.lead{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px}
+.foot{margin-top:22px;font-size:11px;color:#6f7b9b;line-height:1.5}
+@media (max-width:860px){
+  main{grid-template-columns:1fr;grid-template-rows:54% 46%}
+  aside{border-left:0;border-top:1px solid var(--line)}
+  .legend{display:none}
+  .brand h1{font-size:19px}
+  .nowcard{top:56px}
+  .tod{top:auto;bottom:14px}
+}
+@media (prefers-reduced-motion:reduce){#snow{display:none}.light{animation:none;opacity:.4}}
+
+/* ================= FRESH THEME (inspirado en fraiche.io) ================= */
+:root{--bg:#FEFFEB;--panel:#FEFFEB;--card:#FFF6D6;--line:#E7E4C0;--text:#2E3120;--muted:#6E705A;
+ --mustard:#FFCE36;--teal:#006D64;--forest:#152826;--mint:#DBFFFB;--coral:#FF6E61;--olive:#393D29;--brown:#413306;--cream2:#F6F8DE;
+ --disp:'Calistoga',Georgia,serif;--body:'Outfit',system-ui,sans-serif;--hand:'Gochi Hand',cursive}
+html,body{background:var(--bg);color:var(--text);font-family:var(--body)}
+header{background:var(--bg);box-shadow:none;border-bottom:1.5px solid var(--line)}
+.brand h1{font-family:var(--disp);font-size:24px;color:var(--brown);letter-spacing:0}
+.brand h1 span{font-family:var(--disp);color:var(--forest);background:var(--mustard);padding:2px 10px 3px;border-radius:6px;display:inline-block;transform:rotate(-2deg);margin-right:4px;transition:transform .3s}
+.brand h1:hover span{transform:rotate(2deg) scale(1.04)}
+.brand small{font-family:var(--hand);font-size:17px;color:var(--teal);letter-spacing:0;text-transform:none;font-weight:400;font-stretch:100%}
+.search input{background:#fff;border:1.5px solid var(--line);color:var(--text);font:500 14px var(--body)}
+.search input::placeholder{color:#9a9c84}
+.search input:focus{border-color:var(--teal);box-shadow:0 0 0 4px #006d6420}
+.res{background:#fff;border:1.5px solid var(--line);box-shadow:0 18px 40px -10px #4133062e}
+.res a{color:var(--text);border-bottom:1px solid #f0eed8}
+.res a:hover,.res a.sel{background:var(--card)}
+.res a small{color:var(--muted)}
+.res .none{color:var(--muted)}
+.tab{background:#fff;border:1.5px solid var(--line);color:var(--olive);font:600 13px/1 var(--body);font-stretch:100%;letter-spacing:.02em;text-transform:none;transition:transform .2s,box-shadow .2s,background .2s}
+.tab:hover{transform:translateY(-2px);border-color:var(--olive);color:var(--forest)}
+.tab.on{background:var(--teal);color:var(--mustard);border-color:var(--teal);box-shadow:0 3px 0 var(--mustard)}
+.bullet{font:700 12px var(--body);color:var(--forest)}
+.who{border:1.5px dashed #cfcba3;color:var(--olive);font:600 12px var(--body);text-transform:none}
+.who b{color:var(--teal)}
+.who:hover{border-color:var(--teal)}
+main{background:var(--bg)}
+aside{background:var(--bg);border-left:1.5px solid var(--line)}
+.btn{background:#fff;border:1.5px solid var(--olive);color:var(--forest);font:700 13px var(--body);text-transform:none;letter-spacing:0;border-radius:999px;backdrop-filter:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--olive);color:var(--forest);border-color:var(--olive)}
+.btn.primary{background:var(--teal);color:var(--mustard);border-color:var(--teal);box-shadow:0 3px 0 var(--mustard)}
+.btn.primary:hover{box-shadow:0 5px 0 var(--mustard)}
+.zoom .btn{border-radius:14px}
+.legend{background:#ffffffee;border:1.5px solid var(--line);color:var(--olive);border-radius:16px;font-family:var(--body)}
+.legend b.sub{border-top-color:#3b4670}
+.scalebar{color:var(--olive)}.scalebar div{border-color:var(--olive)}
+.tod{background:var(--mustard);color:var(--forest);border:none;font:700 12px var(--body);text-transform:none;letter-spacing:.02em;box-shadow:0 3px 0 var(--forest)}
+.nowcard{background:#fff;color:var(--text);border:1.5px solid var(--olive);border-radius:999px;font:600 13.5px var(--body);box-shadow:0 4px 0 var(--olive)}
+.nowcard b{font-family:var(--hand);font-size:17px;color:var(--teal)}
+.dayhead h2{font-family:var(--disp);font-weight:400;font-size:26px;line-height:1.1;text-transform:none;letter-spacing:0;color:var(--brown)}
+.ddate{font-family:var(--hand);font-size:17px;letter-spacing:0;text-transform:none;color:var(--teal)}
+.dnum{font:400 14px var(--disp);color:var(--forest);border-radius:18px;transform:rotate(-4deg);box-shadow:0 4px 0 var(--forest);transition:transform .3s}
+.dayhead:hover .dnum{transform:rotate(3deg) scale(1.05)}
+.stat{background:var(--card);border:none;border-radius:18px}
+.stat b{font:700 17px var(--body);color:var(--forest)}
+.stat span{color:var(--muted)}
+.statnote{color:#8b8d74}
+.chips span{background:#fff;border:1.5px solid var(--line);color:var(--olive);font-weight:500}
+.tip{background:#E9FBF8;border-left:none;border-radius:18px;color:#1f3d3a;position:relative}
+.tl:before{background:repeating-linear-gradient(var(--line) 0 6px,transparent 6px 11px);width:2px}
+.tl li{border-radius:18px;transition:background .25s,transform .25s}
+.tl li:hover{background:var(--cream2)}
+.tl li.active{background:var(--card)}
+.tl li.active .badge{box-shadow:0 0 0 4px var(--bg),0 0 0 6px var(--c)}
+.badge{color:var(--forest);font:700 13px var(--body);box-shadow:0 0 0 4px var(--bg)}
+.badge.nomap{background:var(--cream2);color:var(--olive)}
+.time{font-family:var(--hand);font-size:17px;color:var(--teal)}
+.mode{background:var(--cream2);color:var(--olive);font-weight:600}
+.name{font:600 16.5px var(--body);font-stretch:100%;color:var(--forest)}
+.body p{color:var(--muted)}
+.meta{color:var(--olive)}
+.photo{background:var(--mustard);color:var(--forest);box-shadow:0 2px 0 var(--forest);font-weight:700}
+.photo:hover{transform:translateY(-2px) rotate(-1deg);filter:none}
+.tl li.hop{color:var(--muted)}.tl li.hop b{color:var(--forest)}
+.links h3,.sec{font-family:var(--hand);font-size:18px;letter-spacing:0;text-transform:none;color:var(--teal)}
+.links a{background:#fff;border:1.5px solid var(--line);color:var(--forest);border-radius:999px;font-weight:600;transition:transform .2s,box-shadow .2s}
+.links a:hover{border-color:var(--olive);transform:translateY(-2px);box-shadow:0 3px 0 var(--olive)}
+.links a span{color:var(--teal)}
+.hero{font-family:var(--disp);font-size:30px;color:var(--brown)}
+.lead{color:var(--muted)}
+.wcard{background:#fff;border:1.5px solid var(--line);border-radius:22px;transition:transform .3s,box-shadow .3s}
+.wcard:nth-child(odd):hover{transform:rotate(-1deg) translateY(-3px);box-shadow:0 6px 0 var(--wc)}
+.wcard:nth-child(even):hover{transform:rotate(1deg) translateY(-3px);box-shadow:0 6px 0 var(--wc)}
+.wcard .dnum{box-shadow:0 3px 0 var(--forest)}
+.wcard h4{font:400 17px var(--disp);text-transform:none;letter-spacing:0;color:var(--brown);font-stretch:100%}
+.wcard p{color:var(--muted)}
+.foot{color:#9a9c84}
+#picker{background:radial-gradient(ellipse at center,#FEFFEBf2,#F6F8DEfa)}
+.ptitle{font-family:var(--disp);color:var(--brown);font-size:38px}
+.pbox p{color:var(--muted);font-family:var(--hand);font-size:20px}
+.pcard{background:#fff;border:2px solid var(--olive);color:var(--forest);font-family:var(--body);box-shadow:0 6px 0 var(--olive)}
+.pcard:nth-child(1){transform:rotate(-2deg)}.pcard:nth-child(2){transform:rotate(2deg)}
+.pcard:hover{transform:rotate(0) translateY(-6px);border-color:var(--teal);box-shadow:0 10px 0 var(--teal)}
+.pcard b{font:400 26px var(--disp);color:var(--brown)}
+.pcard small{color:var(--muted)}
+/* map labels + markers */
+.water-lbl{font:400 15px var(--hand);font-stretch:100%;letter-spacing:.05em}
+.boro-lbl{font:400 12px var(--disp);letter-spacing:.25em}
+.hood-lbl{font:600 9.5px var(--body);font-stretch:100%;letter-spacing:.14em}
+.mk .num{font:700 11px var(--body)}
+.mk .lbl rect{fill:#fffffff2;stroke:var(--olive);stroke-width:1.2}
+.mk .lbl text{fill:var(--forest);font:600 12.5px var(--body);font-stretch:100%}
+.mk .dot{stroke:var(--forest)}
+.dist text{font:600 11px var(--body);font-stretch:100%}
+.t-day .dist rect{stroke:var(--olive)}
+.walker circle{fill:#fff;stroke:var(--forest);stroke-width:1.5}
+.fx-title{font-family:var(--hand);font-size:34px}
+.alti{background:#fffffff0;color:var(--forest);border:1.5px solid var(--olive);font-family:var(--body)}
+.alti b{font-family:var(--disp);color:var(--teal)}
+/* paleta del mapa */
+#mapwrap{--land:#13201f;--landS:#24403c;--manh:#1a2e2b;--manhS:#2f5550;--park:#1f4436;--parkS:#2c6b53;--res:#123c3a;--street:#2a4844;--bridge:#9fc9c2;--wl:#78a19d;--bl:#8fb5b0;--hl:#cfe9e5;--sub:#DBFFFB;--fer:#7fe3d8}
+#mapwrap.t-day{--land:#F3F1D6;--landS:#d9d4ae;--manh:#FEFFEB;--manhS:#c9c39a;--park:#CFE6AE;--parkS:#9cc77a;--res:#BFE9E2;--street:#E8E2C4;--bridge:#8c8a74;--wl:#2C7A72;--bl:#8a7f58;--hl:#6b6346;--sub:#393D29;--fer:#006D64;--case:#393D29}
+#mapwrap.t-dusk{--land:#5b4a3a;--landS:#7c6650;--manh:#6b5844;--manhS:#9a7d5c;--park:#5d6e46;--parkS:#7a8d5c;--res:#c07a5a;--street:#8b7158;--bridge:#ffd98a;--wl:#ffe2b0;--bl:#ffd9b8;--hl:#fff0d8;--sub:#fff4e0;--fer:#bff5ee;--case:#2a1d12}
+/* cinta manuscrita */
+.marquee{overflow:hidden;background:var(--forest);border-radius:22px;margin:0 0 18px;padding:10px 0;position:relative}
+.marquee div{display:inline-block;white-space:nowrap;font:400 30px var(--hand);color:var(--mint);animation:mq 26s linear infinite;padding-left:100%}
+@keyframes mq{to{transform:translateX(-100%)}}
+.sticker{position:absolute;right:16px;top:8px;width:92px;height:92px;display:grid;place-items:center;text-align:center;font:400 15px/1.05 var(--hand);color:var(--mint);background:var(--teal);transform:rotate(12deg);
+ clip-path:polygon(50% 0%,61% 8%,75% 4%,80% 18%,95% 21%,92% 36%,100% 50%,92% 64%,95% 79%,80% 82%,75% 96%,61% 92%,50% 100%,39% 92%,25% 96%,20% 82%,5% 79%,8% 64%,0% 50%,8% 36%,5% 21%,20% 18%,25% 4%,39% 8%);animation:wob 4s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(4deg) scale(1.05)}}
+.weekwrap{position:relative}
+/* reveal al scrollear */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.marquee div,.sticker{animation:none}.rv{opacity:1;transform:none}}
+@media (max-width:860px){.brand h1{font-size:19px}.brand small{font-size:15px}.who{padding:5px 9px;font-size:11px}.who b{display:none}.hero{font-size:24px}}
+</style>
+</head>
+<body>
+<div id="picker"><div class="pbox"><div class="ptitle">¿Quién está mirando?</div><p>Elegí tu perfil para ver tu itinerario.</p>
+  <div class="pcards"><button class="pcard" data-p="pipis"><span>💑</span><b>Pipis</b><small>Los 5 días y medio completos</small></button><button class="pcard" data-p="chus"><span>👨‍👩‍👧</span><b>Chus</b><small>Viernes a domingo, con la nena</small></button></div></div></div>
+<div id="app">
+  <header>
+    <div class="brand"><h1><span>NUEVA YORK</span> · NUESTRO VIAJE</h1><small>18 → 23 dic · base: POD Times Square</small><div class="search"><input id="q" type="search" placeholder="🔍 Buscar atracción, barrio o comida…" autocomplete="off"><div class="res" id="res"></div></div></div>
+    <div class="tabrow"><nav class="tabs" id="tabs"></nav><button class="who" id="who"></button></div>
+  </header>
+  <main>
+    <div id="mapwrap">
+      <div class="skyfx" id="sky"></div>
+      <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="tint" id="tint"></div><div class="sun" id="sun"><i></i></div><div class="moon" id="moon"></div><div id="fx"></div>
+      <div class="tod" id="tod">☀️ Día</div>
+      <canvas id="snow"></canvas>
+      <div class="ctrls">
+        <button class="btn primary" id="playBtn">▶ Reproducir día</button>
+        <button class="btn" id="allBtn">⏭ Ver todo</button>
+        <button class="btn" id="speedBtn">1×</button>
+      </div>
+      <div class="zoom">
+        <button class="btn" id="zin" aria-label="Acercar">+</button>
+        <button class="btn" id="zout" aria-label="Alejar">−</button>
+        <button class="btn" id="zfit" aria-label="Centrar">⤢</button>
+      </div>
+      <div class="nowcard" id="now"></div>
+      <div class="legend"><span><b></b>🚶 Caminata</span><span><b class="sub"></b>🚇 Subte</span><span><b class="fer"></b>⛴️ Ferry</span><span><b class="tra"></b>🚡 Teleférico</span></div>
+      <div class="scalebar" id="scale"><span>1 km</span><div></div></div>
+    </div>
+    <aside id="panel"></aside>
+  </main>
+</div>
+<script>
+// ---------- DATA ----------
+const HOTEL=[40.7590,-73.9935];
+const MODE={walk:{icon:'🚶',name:'a pie'},subway:{icon:'🚇',name:'subte'},ferry:{icon:'⛴️',name:'ferry'},tram:{icon:'🚡',name:'teleférico'}};
+const G='https://www.google.com/maps/dir/';
+let DAYS=[
+{id:'viernes',short:'VIE<br>18',tab:'Vie 18',date:'Viernes 18 de diciembre',title:'Llegada + Central Park al atardecer',color:'#FF6E61',km:'~4 km',walk:'~1 h',cost:'US$100–130',
+ hoods:["Hell's Kitchen",'Central Park','Times Square'],
+ tip:'Día del vuelo: Central Park suave, sin horarios, con bancos para parar y la nena durmiendo en el cochecito. El zoo no entra (cierra ~16:30).',
+ stops:[
+ {t:'11:30',n:'Llegada al aeropuerto',i:'✈️',d:'1–1:30 h',c:'Taxi ~US$90–100 total · AirTrain+subte ~US$11,50',x:'Traslado al hotel. Si llegan a JFK, el taxi tiene tarifa fija a Manhattan.',ll:null},
+ {t:'13:30',n:'POD Times Square · ¡Sorpresa!',i:'🎉',d:'1:30 h',c:'Almuerzo US$25–35',x:"Encuentro sorpresa con tu amigo y almuerzo en Hell's Kitchen (9th Ave).",ll:HOTEL},
+ {t:'15:00',n:'The Pond + Gapstow Bridge',i:'🌉',d:'30 min',c:'Gratis',x:'Caminata por 7th Ave hasta el parque. La postal clásica con los rascacielos de fondo.',ll:[40.7660,-73.9737],m:'walk',via:[[40.7580,-73.9855],[40.7650,-73.9768]]},
+ {t:'15:30',n:'Vista a la pista Wollman',i:'⛸️',d:'15 min',c:'Gratis mirar',x:'La pista de patinaje con el skyline de Central Park South detrás.',ll:[40.7690,-73.9745],m:'walk'},
+ {t:'15:50',n:'The Mall',i:'🌳',d:'20 min',c:'Gratis',x:'El paseo de los olmos, la avenida más linda del parque.',ll:[40.7710,-73.9715],m:'walk'},
+ {t:'16:15',n:'Bethesda Terrace al atardecer',i:'⛲',d:'20 min',c:'Gratis',x:'La fuente y la terraza con la luz del atardecer (~16:30).',ll:[40.7740,-73.9708],m:'walk'},
+ {t:'16:35',n:'Bow Bridge al anochecer',i:'🌆',d:'15 min',c:'Gratis',x:'El puente de hierro sobre The Lake, con las torres encendiéndose.',ll:[40.7756,-73.9718],m:'walk'},
+ {t:'17:00',n:'Hotel · descanso',i:'🛏️',d:'3 h',c:'US$3 subte',x:'Subte C desde 72 St (Central Park West) hasta 42 St. Ducha y siesta; la familia acuesta a la nena.',ll:HOTEL,m:'subway',via:[[40.7757,-73.9763],[40.7573,-73.9898]]},
+ {t:'20:30',n:"Cena en Hell's Kitchen",i:'🍝',d:'1:30 h',c:'US$35–50',x:'9th Ave entre las calles 43 y 55: decenas de restaurantes de todo el mundo, con cocina hasta tarde.',ll:[40.7625,-73.9898],m:'walk'},
+ {t:'22:00',n:'Times Square de noche',i:'🌃',d:'45 min',c:'Gratis',x:'De noche es cuando más impacta. Queda a 10 minutos del hotel.',ll:[40.7580,-73.9855],m:'walk'}
+ ],
+ links:[{l:'🗺️ Tarde: Central Park',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Gapstow+Bridge,+New+York,+NY/Wollman+Rink,+New+York,+NY/The+Mall,+Central+Park,+New+York,+NY/Bethesda+Terrace,+New+York,+NY/Bow+Bridge,+Central+Park,+New+York,+NY/72+St+Station+(B,C),+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🗺️ Noche: Hell\'s Kitchen → Times Square',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/9th+Ave+%26+W+50th+St,+New+York,+NY/Times+Square,+New+York,+NY/data=!4m2!4m1!3e2'}]},
+{id:'sabado',short:'SÁB<br>19',tab:'Sáb 19',date:'Sábado 19 de diciembre',title:'High Line, Flatiron, Summit y Navidad en Midtown',color:'#FFCE36',km:'~7 km',walk:'~1:45 h',cost:'US$110–150',
+ hoods:['Hudson Yards','Chelsea','Meatpacking','Flatiron','Midtown','5th Ave','Koreatown'],
+ tip:'Arranquen 9:30–10: el High Line y Chelsea Market se llenan cerca del mediodía un sábado. Con cochecito, en el Rockefeller y Saks que alguien vaya adelante abriendo camino.',
+ stops:[
+ {t:'9:30',n:'Salida del hotel',i:'🏨',x:'Caminando hacia Hudson Yards (~12 min).',ll:HOTEL},
+ {t:'9:45',n:'Vessel · Hudson Yards',i:'🏗️',d:'15 min',c:'Gratis (por fuera)',x:'Foto en la escultura con forma de panal y arranque del High Line.',ll:[40.7538,-74.0022],m:'walk',via:[[40.7575,-73.9975]]},
+ {t:'10:00',n:'High Line',i:'🌿',d:'1:15 h',c:'Gratis',x:'Parque elevado sobre vías de tren viejas, hacia el sur hasta Gansevoort St. Tiene ascensores: apto cochecito.',ll:[40.7465,-74.0057],m:'walk',via:[[40.7525,-74.0016]]},
+ {t:'11:15',n:'Little Island',i:'🏝️',d:'40 min',c:'Gratis',x:'Parque flotante sobre el Hudson, en Meatpacking.',ll:[40.7420,-74.0103],m:'walk',via:[[40.7420,-74.0080],[40.7398,-74.0080],[40.7408,-74.0093]]},
+ {t:'12:00',n:'Almuerzo en Chelsea Market',i:'🌮',d:'1:15 h',c:'US$15–25',x:'Mercado cubierto con decenas de puestos: tacos, ramen, langosta, pizza. Calentito.',ll:[40.7424,-74.0061],m:'walk'},
+ {t:'13:30',n:'Flatiron Building + Madison Square',i:'📐',d:'25 min',c:'Gratis',x:'Caminata de ~20 min desde Chelsea Market. El edificio "plancha" y el parque con vista al Empire State.',ll:[40.7411,-73.9897],m:'walk',via:[[40.7400,-73.9990]]},
+ {t:'14:15',n:'Biblioteca + Bryant Park Winter Village',i:'🎁',d:'1 h',c:'US$3 subte',x:'Subte F/M de 23 St a 42 St–Bryant Park. Los leones de la biblioteca, mercado navideño y pista de patinaje.',ll:[40.7536,-73.9832],m:'subway',via:[[40.7429,-73.9928],[40.7546,-73.9842]]},
+ {t:'15:30',fx:'summit',n:'Summit One Vanderbilt',i:'🏙️',d:'1:30 h',c:'Ya tienen entradas',x:'A 5 min caminando. Mirador con salas espejadas, justo para el atardecer (~16:30).',ll:[40.7530,-73.9787],m:'walk',via:[[40.7532,-73.9810]]},
+ {t:'17:00',n:'Grand Central Terminal',i:'🚉',d:'30 min',c:'Gratis',x:'La bóveda celeste y la galería de los susurros (abajo, frente al Oyster Bar).',ll:[40.7527,-73.9772],m:'walk'},
+ {t:'17:45',n:'Árbol del Rockefeller Center',i:'🎄',d:'40 min',c:'Gratis',x:'El árbol más famoso del mundo, con la pista de patinaje abajo. Suben por 5th Ave.',ll:[40.7587,-73.9787],m:'walk',via:[[40.7545,-73.9800]]},
+ {t:'18:30',n:'Luces de Saks + vidrieras de 5th Ave',i:'✨',d:'30 min',c:'Gratis',x:'Show de luces en la fachada cada pocos minutos.',ll:[40.7580,-73.9772],m:'walk'},
+ {t:'19:15',n:'Hotel · pausa',i:'🛏️',d:'1:30 h',x:'Vuelta pasando por Times Square iluminado. Los amigos acuestan a la nena; ustedes se cambian.',ll:HOTEL,m:'walk',via:[[40.7598,-73.9800],[40.7580,-73.9855]]},
+ {t:'20:30',n:"Vidrieras navideñas de Macy's",i:'🎁',d:'25 min',c:'Gratis',x:'Subte a 34 St–Herald Sq. Las vidrieras navideñas más famosas de NY, en la tienda más grande del país. De ahí, 2 cuadras a Koreatown.',ll:[40.7508,-73.9890],m:'subway',via:[[40.7573,-73.9898],[40.7497,-73.9877]]},
+ {t:'21:00',n:'Cena en Koreatown',i:'🥩',d:'1:30 h',c:'US$40–60',x:'La calle 32 entre 5th Ave y Broadway: parrilla coreana, karaoke y movimiento hasta la madrugada.',ll:[40.7477,-73.9867],m:'walk'}
+ ],
+ links:[{l:'🗺️ Mañana: High Line → Chelsea Market',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/The+Vessel,+New+York,+NY/High+Line+23rd+St+Entrance,+New+York,+NY/High+Line+Gansevoort+St+Entrance,+New+York,+NY/Little+Island,+New+York,+NY/Chelsea+Market,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🗺️ Chelsea Market → Flatiron',u:G+'Chelsea+Market,+New+York,+NY/Flatiron+Building,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🚇 Flatiron → Bryant Park',u:G+'23+St+Station+(F,M),+New+York,+NY/Bryant+Park,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Tarde: Summit → Navidad → Hotel',u:G+'Bryant+Park+Winter+Village,+New+York,+NY/Summit+One+Vanderbilt,+New+York,+NY/Grand+Central+Terminal,+New+York,+NY/Rockefeller+Center+Christmas+Tree,+New+York,+NY/Saks+Fifth+Avenue,+New+York,+NY/Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🚇 Noche: Koreatown',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Koreatown,+W+32nd+St,+New+York,+NY/data=!4m2!4m1!3e3'}]},
+{id:'domingo',short:'DOM<br>20',tab:'Dom 20',date:'Domingo 20 de diciembre',title:'Museo de Historia Natural + Harry Potter',color:'#00A896',km:'',walk:'',cost:'US$110–150',
+ hoods:['Upper West Side','Central Park'],
+ tip:'Mañana bajo techo con la nena (ideal si hace mucho frío): dinosaurios y la ballena azul. Reserven las entradas online para entrar a las 10. A la tarde descanso y a la noche, la obra.',
+ stops:[
+ {t:'9:00',n:'Brunch',i:'🥞',d:'1 h',c:'US$25–40',x:'Cerca del hotel, todos juntos.',ll:HOTEL},
+ {t:'10:00',n:'Museo de Historia Natural',i:'🦕',d:'2:30 h',c:'~US$30 adultos · menores de 3 gratis (reservar online)',x:'Subte C desde 42 St hasta 81 St, que sale adentro del museo. Dinosaurios gigantes, la ballena azul de 29 m colgando del techo y dioramas de animales. Perfecto para la nena.',ll:[40.7813,-73.9740],m:'subway',via:[[40.7573,-73.9898],[40.7816,-73.9721]]},
+ {t:'12:40',n:'Almuerzo en el Upper West Side',i:'🥗',d:'1 h',c:'US$25–35',x:'Columbus Ave, a una cuadra del museo, está llena de lugares para comer.',ll:null},
+ {t:'13:45',n:'Vuelta al hotel · despedida',i:'👋',c:'US$3',x:'Subte C desde 81 St hasta 42 St (~15 min). Ellos se van a las 16 h; después, descanso.',ll:HOTEL,m:'subway',via:[[40.7816,-73.9721],[40.7573,-73.9898]]},
+ {t:'16:15',n:'Patinar en Bryant Park (opcional)',i:'⛸️',opt:true,d:'1 h',c:'Entrada gratis · alquiler de patines ~US$20–30',x:'A 5 minutos del hotel. La pista del Winter Village, rodeada de rascacielos y del mercado navideño. Vuelven a tiempo para la merienda-cena.',ll:null},
+ {t:'17:30',n:'Merienda-cena liviana',i:'🥯',d:'45 min',c:'US$20–30',x:'Algo liviano antes de la obra: la cena de verdad, después.',ll:null},
+ {t:'19:00',fx:'magic',n:'Harry Potter and the Cursed Child',i:'⚡',d:'~3:30 h',c:'Ya tienen entradas',x:'Lyric Theatre, 214 W 43rd St, a 7 minutos del hotel.',ll:[40.7570,-73.9880],m:'walk'},
+ {t:'22:35',n:"Porción en Joe's Pizza",i:'🍕',d:'30 min',c:'US$5–8',x:'Al salir del teatro: la porción clásica de NY, abierto hasta tarde. De ahí, al hotel.',ll:[40.7547,-73.9870],m:'walk'}
+ ],
+ links:[{l:'🚇 Subte al museo',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/American+Museum+of+Natural+History,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🚇 Museo → Hotel',u:G+'American+Museum+of+Natural+History,+New+York,+NY/Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Hotel → Teatro',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Lyric+Theatre,+214+W+43rd+St,+New+York,+NY/data=!4m2!4m1!3e2'}]},
+{id:'lunes',short:'LUN<br>21',tab:'Lun 21 ⭐',date:'Lunes 21 de diciembre',title:'Central Park a fondo + gran tarde en SoHo',color:'#F28C28',km:'~10 km',walk:'~2:30 h',cost:'US$110–140 + compras',
+ hoods:['Central Park','Upper West Side','Union Square','SoHo','Nolita','Little Italy','Chinatown','Greenwich Village','West Village'],
+ tip:'Es el día más largo: calzado cómodo sí o sí. Central Park, Union Square, Broadway hasta SoHo, y a la noche las calles del West Village iluminadas (Perry, Grove, Bedford, Commerce) antes del jazz en Cellar Dog.',
+ stops:[
+ {t:'9:00',n:'Salida del hotel',i:'🏨',x:'Caminando hasta Columbus Circle por 8th Ave.',ll:HOTEL},
+ {t:'9:20',n:'Columbus Circle',i:'🧭',d:'10 min',c:'Gratis',x:'Entrada sudoeste al parque.',ll:[40.7681,-73.9819],m:'walk',via:[[40.7640,-73.9862]]},
+ {t:'10:00',n:'Patinar en Wollman Rink (opcional)',i:'⛸️',opt:true,d:'1 h',c:'~US$20–40 entrada + ~US$15 patines',x:'La pista de Central Park, a 10 minutos de Columbus Circle; abre a las 10. Si la hacen, corran el resto de la mañana 1 hora (menos tiempo en el Reservoir).',ll:null},
+ {t:'9:45',n:'Bethesda Fountain',i:'⛲',d:'20 min',c:'Gratis',x:'Por el lado oeste del parque, pasando por Sheep Meadow.',ll:[40.7740,-73.9710],m:'walk',via:[[40.7710,-73.9770]]},
+ {t:'10:10',n:'Bow Bridge',i:'🌉',d:'15 min',c:'Gratis',x:'El puente de hierro más fotografiado, sobre The Lake.',ll:[40.7756,-73.9718],m:'walk'},
+ {t:'10:30',n:'Strawberry Fields',i:'🎵',d:'15 min',c:'Gratis',x:'El mosaico "Imagine", en homenaje a John Lennon.',ll:[40.7756,-73.9750],m:'walk'},
+ {t:'11:00',n:'Belvedere Castle',i:'🏰',d:'20 min',c:'Gratis',x:'Castillito con mirador. Antes cruzan The Ramble, la parte más "bosque" del parque.',ll:[40.7794,-73.9692],m:'walk',via:[[40.7778,-73.9728]]},
+ {t:'11:30',n:'Reservoir Jacqueline Kennedy Onassis',i:'💧',d:'45 min',c:'Gratis',x:'Vuelta completa opcional (2,5 km) con vista al skyline.',ll:[40.7826,-73.9650],m:'walk'},
+ {t:'12:30',n:'Upper West Side + Levain Bakery',i:'🍪',d:'1:15 h',c:'US$25–35',x:'Almuerzo en el barrio y las galletas más famosas de NY.',ll:[40.7799,-73.9802],m:'walk',via:[[40.7815,-73.9725]]},
+ {t:'14:00',n:'Union Square Holiday Market',i:'🛍️',d:'40 min',c:'US$3 subte',x:'Subte 1/2/3 desde 72 St hasta 14 St. Mercado navideño de artesanos: buenos regalos.',ll:[40.7359,-73.9911],m:'subway',via:[[40.7784,-73.9819],[40.7378,-73.9969],[40.7359,-73.9911]]},
+ {t:'15:00',n:'SoHo · Greene St',i:'🛍️',d:'2:30 h todo SoHo',c:'Compras',x:'Bajan caminando por Broadway, con tiendas todo el trayecto (~20 min). Calles de adoquines y edificios de hierro fundido.',ll:[40.7253,-74.0001],m:'walk',via:[[40.7300,-73.9930],[40.7255,-73.9975]]},
+ {t:'15:30',n:'SoHo · Prince St y Broadway',i:'👟',c:'Compras',x:'Grandes marcas y tiendas insignia.',ll:[40.7244,-73.9978],m:'walk'},
+ {t:'16:15',n:'SoHo · Mercer y Spring St',i:'👜',c:'Compras',x:'Boutiques de diseño y tiendas conceptuales.',ll:[40.7237,-73.9990],m:'walk'},
+ {t:'17:00',n:'Nolita',i:'💎',d:'45 min',c:'Compras',x:'Elizabeth y Mott St: boutiques chicas y cafés con mucho encanto.',ll:[40.7232,-73.9944],m:'walk'},
+ {t:'17:45',n:'Little Italy · Mulberry St',i:'🇮🇹',d:'30 min',c:'Gratis',x:'La calle iluminada para Navidad.',ll:[40.7193,-73.9973],m:'walk'},
+ {t:'18:15',n:'Chinatown · Mott St',i:'🏮',d:'45 min',c:'US$5–10',x:'Paseo y un bubble tea o dumplings de picada.',ll:[40.7165,-73.9990],m:'walk'},
+ {t:'19:15',n:'Hotel · dejar las bolsas',i:'🛍️',d:'1 h',c:'US$3',x:'Subte desde Canal St. Dejan las compras y se cambian.',ll:HOTEL,m:'subway',via:[[40.7186,-74.0000],[40.7573,-73.9898]]},
+ {t:'19:50',n:'Washington Square Park',i:'🏛️',d:'15 min',c:'US$3 subte',x:'Subte A/C/E de 42 St a W 4 St. De noche, con el arco iluminado y su árbol de Navidad.',ll:[40.7308,-73.9973],m:'subway',via:[[40.7573,-73.9898],[40.7322,-74.0004]]},
+ {t:'20:05',n:'West Village · Bleecker St',i:'🏘️',d:'15 min',c:'Gratis',x:'La calle principal del Village: tiendas, cafés y pastelerías. Desde acá arranca el paseo por las calles más lindas del barrio.',ll:[40.7334,-74.0040],m:'walk',via:[[40.7310,-74.0010]]},
+ {t:'20:15',n:'Perry St',i:'🌳',d:'15 min',c:'Gratis',x:'Brownstones con escalinatas y árboles. En el 66 está la escalera de la casa de Carrie en Sex and the City.',ll:[40.7354,-74.0035],m:'walk'},
+ {t:'20:30',n:'Grove St y Bedford St',i:'🏡',d:'15 min',c:'Gratis',x:'En la esquina, el 17 de Grove St: una de las últimas casas de madera de Manhattan (1822). A pasos, Grove Court, un patio escondido entre casas antiguas.',ll:[40.7326,-74.0048],m:'walk',via:[[40.7340,-74.0045]]},
+ {t:'20:40',n:'75½ Bedford St',i:'📏',d:'10 min',c:'Gratis',x:'La casa más angosta de Nueva York: menos de 3 metros de frente.',ll:[40.7309,-74.0050],m:'walk'},
+ {t:'20:50',n:'Commerce St',i:'🎭',d:'15 min',c:'Gratis',x:'Una calle curva y tranquila, con el Cherry Lane Theatre (el teatro off-Broadway más antiguo en funcionamiento) y las casas gemelas de 39-41 Commerce.',ll:[40.7312,-74.0060],m:'walk'},
+ {t:'21:00',n:"Pizza para llevar en Joe's (Carmine St)",i:'🍕',d:'15 min',c:'~US$10–12 (2 porciones)',x:"A 2 cuadras de Commerce St. Joe's Pizza original, en Carmine y Bleecker. La compran para llevar: Cellar Dog no tiene cocina pero deja entrar con comida. Alternativa: falafel en Mamoun's (MacDougal St).",ll:[40.7305,-74.0021],m:'walk'},
+ {t:'21:15',n:'Cena con jazz en Cellar Dog',i:'🎷',d:'2 h',c:'US$5 entrada + tragos baratos (~US$8–12)',x:'Bar en un sótano del West Village (donde estaba el mítico Fat Cat): jazz en vivo todas las noches desde las 19 h, sillones gastados, pool y ping pong. Sin consumo mínimo ni reservas. Total cena + jazz + 2 tragos: ~US$35–45 por persona.',ll:[40.7334,-74.0026],m:'walk'}
+ ],
+ links:[{l:'🗺️ Mañana: Central Park',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Columbus+Circle,+New+York,+NY/Bethesda+Fountain,+New+York,+NY/Bow+Bridge,+Central+Park,+New+York,+NY/Strawberry+Fields,+Central+Park,+New+York,+NY/Belvedere+Castle,+New+York,+NY/Jacqueline+Kennedy+Onassis+Reservoir,+New+York,+NY/Levain+Bakery,+167+W+74th+St,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🚇 Subte a Union Square',u:G+'Levain+Bakery,+167+W+74th+St,+New+York,+NY/Union+Square,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Tarde: Union Sq → SoHo → Chinatown',u:G+'Union+Square,+New+York,+NY/Greene+St+%26+Prince+St,+New+York,+NY/Prince+St+%26+Broadway,+New+York,+NY/Mercer+St+%26+Spring+St,+New+York,+NY/Elizabeth+St+%26+Prince+St,+New+York,+NY/Mulberry+St+%26+Grand+St,+New+York,+NY/Mott+St+%26+Canal+St,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🚇 Noche: hotel → Washington Sq',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Washington+Square+Park,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Noche: Village → Joe y Cellar Dog',u:G+'Washington+Square+Park,+New+York,+NY/Bleecker+St+%26+Christopher+St,+New+York,+NY/66+Perry+St,+New+York,+NY/17+Grove+St,+New+York,+NY/75+1%2F2+Bedford+St,+New+York,+NY/Cherry+Lane+Theatre,+38+Commerce+St,+New+York,+NY/Joe%27s+Pizza,+7+Carmine+St,+New+York,+NY/Cellar+Dog,+75+Christopher+St,+New+York,+NY/data=!4m2!4m1!3e2'}]},
+{id:'martes',short:'MAR<br>22',tab:'Mar 22',date:'Martes 22 de diciembre',title:'Downtown, Katz\'s, Puente de Brooklyn y luces de Navidad',color:'#7FB5E8',km:'~10 km',walk:'~2:30 h',cost:'US$120–160',
+ hoods:['Financial District','Tribeca','Lower East Side','Chinatown','DUMBO','Dyker Heights'],
+ tip:'En el ferry vayan del lado derecho a la ida para ver la Estatua de cerca. El puente, mejor cruzarlo de Manhattan hacia Brooklyn: el skyline queda a la vuelta.',
+ stops:[
+ {t:'9:00',n:'Salida del hotel',i:'🏨',ll:HOTEL},
+ {t:'9:30',n:'Terminal del ferry (Whitehall)',i:'🚇',d:'30 min',c:'US$3',x:'Subte 1 desde Times Sq hasta South Ferry.',ll:[40.7013,-74.0130],m:'subway',via:[[40.7553,-73.9871],[40.7380,-74.0002],[40.7190,-74.0060]]},
+ {t:'9:45',n:'Ferry a Staten Island',i:'⛴️',d:'1:15 h ida y vuelta',c:'Gratis',x:'Pasa frente a la Estatua de la Libertad. Se bajan y vuelven en el siguiente.',ll:[40.6430,-74.0752],m:'ferry',via:[[40.6950,-74.0200],[40.6700,-74.0500]]},
+ {t:'10:45',n:'Battery Park',i:'🗽',d:'20 min',c:'Gratis',x:'Vista a la Estatua y al puerto.',ll:[40.7033,-74.0170],m:'ferry',via:[[40.6700,-74.0500],[40.6950,-74.0200],[40.7008,-74.0145]]},
+ {t:'11:05',n:'Charging Bull',i:'🐂',d:'15 min',c:'Gratis',ll:[40.7056,-74.0134],m:'walk'},
+ {t:'11:20',n:'Wall Street',i:'🏦',d:'25 min',c:'Gratis',x:'La Bolsa de NY y Federal Hall.',ll:[40.7073,-74.0103],m:'walk'},
+ {t:'11:30',n:'Memorial 9/11',i:'🕊️',d:'45 min',c:'Gratis',x:'Las dos fuentes donde estaban las Torres Gemelas.',ll:[40.7115,-74.0134],m:'walk'},
+ {t:'12:15',n:'Oculus',i:'🦴',d:'20 min',c:'Gratis',x:'La estación-escultura de Calatrava.',ll:[40.7114,-74.0110],m:'walk'},
+ {t:'12:40',n:'Tribeca · cuartel de Ghostbusters',i:'👻',d:'30 min',c:'Gratis',x:'Calles de adoquines, lofts y el cuartel de bomberos de la película.',ll:[40.7195,-74.0064],m:'walk',via:[[40.7160,-74.0090]]},
+ {t:'13:30',n:"Almuerzo en Katz's Delicatessen",i:'🥪',d:'1 h',c:'~US$30–40 (sándwich para compartir + extras)',x:"Subte o Uber (~15 min) al Lower East Side. El sándwich de pastrami más famoso del mundo, desde 1888: uno alcanza para dos. Guarden el ticket que les dan al entrar.",ll:[40.7223,-73.9874],m:'subway',via:[[40.7196,-74.0060],[40.7255,-73.9975]]},
+ {t:'15:00',n:'Puente de Brooklyn',i:'🌉',d:'45 min',c:'Gratis',x:'Caminan ~25 min por el Lower East Side y Chinatown hasta la entrada peatonal frente a City Hall. ~1,8 km cruzando el East River.',ll:[40.7124,-74.0040],m:'walk',via:[[40.7180,-73.9920],[40.7140,-73.9990]]},
+ {t:'15:45',n:'DUMBO · Washington St',i:'📸',d:'35 min',c:'Gratis',x:'La foto clásica con el Manhattan Bridge enmarcado entre edificios.',ll:[40.7033,-73.9895],m:'walk',via:[[40.7065,-73.9985],[40.7030,-73.9935],[40.7000,-73.9905]]},
+ {t:'16:20',n:'Brooklyn Bridge Park · Pier 1',i:'🌅',d:'40 min',c:'Gratis',x:'Atardecer con el skyline de Manhattan enfrente.',ll:[40.7010,-73.9960],m:'walk'},
+ {t:'17:00',n:"Merienda en Juliana's",i:'🍕',d:'45 min',c:'US$15–25',x:'Una pizza para compartir y entrar en calor.',ll:[40.7024,-73.9932],m:'walk'},
+ {t:'18:15',n:'Dyker Heights · luces de Navidad',i:'🎅',d:'1:30 h + viaje',c:'US$3',x:'Subte R desde Court St hasta 86 St. Casas decoradas a otro nivel: recorran las calles 83 a 86 entre 11th y 13th Ave.',ll:[40.6228,-74.0108],m:'subway',opt:true,via:[[40.6941,-73.9918],[40.6600,-74.0000],[40.6226,-74.0282]]},
+ {t:'20:45',n:'Cena en Restaurant Row',i:'🍽️',d:'1:30 h',c:'US$40–60',x:'Subte R directo hasta 49 St. La calle 46 entre 8th y 9th Ave, llena de restaurantes, a 5 minutos del hotel.',ll:[40.7598,-73.9885],m:'subway',via:[[40.6226,-74.0282],[40.6941,-73.9918],[40.7598,-73.9842]]}
+ ],
+ links:[{l:'🚇 Subte al ferry',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Whitehall+Terminal,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🚇 Noche: DUMBO → Dyker Heights',u:G+'Juliana%27s+Pizza,+Brooklyn,+NY/84th+St+%26+12th+Ave,+Brooklyn,+NY/data=!4m2!4m1!3e3'},
+        {l:'🚇 Dyker Heights → Restaurant Row',u:G+'84th+St+%26+12th+Ave,+Brooklyn,+NY/W+46th+St+%26+8th+Ave,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Mañana: Ferry → Tribeca',u:G+'Whitehall+Terminal,+New+York,+NY/The+Battery,+New+York,+NY/Charging+Bull,+New+York,+NY/Wall+Street,+New+York,+NY/9%2F11+Memorial,+New+York,+NY/Oculus,+New+York,+NY/Ghostbusters+Firehouse,+14+N+Moore+St,+New+York,+NY/data=!4m2!4m1!3e2'},
+        {l:'🚇 Tribeca → Katz\'s',u:G+'Ghostbusters+Firehouse,+14+N+Moore+St,+New+York,+NY/Katz%27s+Delicatessen,+205+E+Houston+St,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Tarde: Katz\'s → Puente → DUMBO',u:G+'Katz%27s+Delicatessen,+205+E+Houston+St,+New+York,+NY/Brooklyn+Bridge+Pedestrian+Entrance,+Centre+St,+New+York,+NY/Washington+St+%26+Water+St,+Brooklyn,+NY/Brooklyn+Bridge+Park+Pier+1,+Brooklyn,+NY/data=!4m2!4m1!3e2'}]},
+{id:'miercoles',short:'MIÉ<br>23',tab:'Mié 23',date:'Miércoles 23 de diciembre',title:'Teleférico, Williamsburg + salida a Washington',color:'#C8735A',km:'~4,5 km',walk:'~1:10 h',cost:'US$80–110 + compras',
+ hoods:['Roosevelt Island','Williamsburg'],
+ tip:'Día apretado pero redondo: teleférico temprano, Williamsburg, y vuelta al hotel a las 13:30 para salir tranquilos.',
+ stops:[
+ {t:'9:00',n:'Salida del hotel',i:'🏨',ll:HOTEL},
+ {t:'9:20',n:'Teleférico de Roosevelt Island',i:'🚡',d:'15 min',c:'US$3 (se paga como el subte)',x:'Subte N/R/W hasta Lexington Av/59 St. La estación está en 2nd Ave y la calle 59.',ll:[40.7612,-73.9643],m:'subway',via:[[40.7553,-73.9871],[40.7626,-73.9676]]},
+ {t:'9:35',n:'Roosevelt Island · vista al skyline',i:'🏙️',d:'40 min',c:'Gratis',x:'4 minutos colgados sobre el East River con Midtown de fondo. Paseo corto por la orilla.',ll:[40.7573,-73.9545],m:'tram'},
+ {t:'10:20',n:'Domino Park',i:'🌆',d:'30 min',c:'Gratis',x:'Subte F + J/M hasta Marcy Av. Vista al skyline y al puente Williamsburg.',ll:[40.7148,-73.9665],m:'subway',via:[[40.7590,-73.9530],[40.7183,-73.9874],[40.7084,-73.9578]]},
+ {t:'11:00',n:'Bedford Ave · vintage y cafés',i:'🧥',d:'50 min',c:'Compras',x:'Tiendas vintage, disquerías y cafés de especialidad.',ll:[40.7155,-73.9594],m:'walk'},
+ {t:'11:50',n:'Artists & Fleas',i:'🎨',d:'40 min',c:'Compras',x:'Mercado de diseñadores independientes y vintage. Después, almuerzo en el barrio.',ll:[40.7213,-73.9585],m:'walk'},
+ {t:'12:30',n:'Almuerzo en Williamsburg',i:'🍔',d:'1 h',c:'US$25–35',ll:null},
+ {t:'13:30',n:'Hotel · retiro de valijas',i:'🧳',d:'1:30 h',c:'US$3',x:'Subte L desde Bedford Av + A/C/E.',ll:HOTEL,m:'subway',via:[[40.7174,-73.9567],[40.7200,-73.9700],[40.7310,-73.9900],[40.7397,-74.0026],[40.7573,-73.9898]]},
+ {t:'15:00',n:'Moynihan Train Hall → Washington',i:'🚆',d:'15 min',x:'Salida a Washington ~16 h.',ll:[40.7505,-73.9970],m:'walk'}
+ ],
+ links:[{l:'🚇 Subte al teleférico',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Roosevelt+Island+Tramway,+E+59th+St+%26+2nd+Ave,+New+York,+NY/data=!4m2!4m1!3e3'},
+        {l:'🚇 Roosevelt Island → Williamsburg',u:G+'Roosevelt+Island+Tramway+Station,+Roosevelt+Island,+NY/Domino+Park,+Brooklyn,+NY/data=!4m2!4m1!3e3'},
+        {l:'🗺️ Caminata Williamsburg',u:G+'Domino+Park,+Brooklyn,+NY/Bedford+Ave+%26+N+4th+St,+Brooklyn,+NY/Artists+%26+Fleas+Williamsburg,+Brooklyn,+NY/Bedford+Av+Station,+Brooklyn,+NY/data=!4m2!4m1!3e2'},
+        {l:'🗺️ Hotel → Estación',u:G+'Pod+Times+Square,+400+W+42nd+St,+New+York,+NY/Moynihan+Train+Hall,+New+York,+NY/data=!4m2!4m1!3e2'}]}
+];
+
+// ---------- PERFILES ----------
+const ALL_DAYS=DAYS;
+const PROFILES={
+ pipis:{name:'Pipis',emoji:'💑',desc:'Los 5 días y medio completos'},
+ chus:{name:'Chus',emoji:'👨‍👩‍👧',desc:'Viernes a domingo, hasta la despedida'}};
+const CHUS_OVR={
+ 'POD Times Square · ¡Sorpresa!':{n:'POD Times Square · ¡Encuentro!',x:"Se encuentran con los Pipis en el hotel y almuerzan juntos en Hell's Kitchen (9th Ave)."},
+ 'Hotel · descanso':{x:'Subte C desde 72 St (Central Park West) hasta 42 St. Siesta para la nena y descanso antes de la noche.'},
+ 'Hotel · pausa':{x:'Vuelta pasando por Times Square iluminado. Acuestan a la nena y se preparan para la noche.'},
+ 'Vuelta al hotel · despedida':{x:'Subte C desde 81 St hasta 42 St (~15 min). Despedida de los Pipis y salida (~16 h).'}};
+function daysFor(pr){
+  if(pr!=='chus')return ALL_DAYS;
+  return ALL_DAYS.filter(d=>['viernes','sabado','domingo'].includes(d.id)).map(d=>{
+    let stops=d.stops.map(s=>({...s,...(CHUS_OVR[s.n]||{})}));
+    const extra={};
+    if(d.id==='domingo'){const k=stops.findIndex(s=>s.n==='Vuelta al hotel · despedida');stops=stops.slice(0,k+1);
+      Object.assign(extra,{title:'Museo de Historia Natural con la nena',tip:'Último día juntos: dinosaurios y la ballena azul a la mañana (reserven online para las 10), almuerzo en el Upper West Side y vuelta al hotel antes de las 14 h para salir a las 16 h.',
+        links:d.links.filter(l=>!l.l.includes('Teatro'))});}
+    return {...d,...extra,stops};});
+}
+let profile=null;
+function setProfile(pr,goTo){profile=pr;try{localStorage.setItem('nyc-profile',pr)}catch(e){}DAYS=daysFor(pr);
+  document.getElementById('who').innerHTML=`${PROFILES[pr].emoji} Viendo como <b>${PROFILES[pr].name}</b> ▾`;
+  buildTabs();document.getElementById('picker').classList.remove('on');go(goTo&&DAYS.some(d=>d.id===goTo)?goTo:'semana');}
+
+// ---------- PHOTOS (Google Images search per stop) ----------
+const PH={'POD Times Square · ¡Sorpresa!':'Pod Times Square hotel','Vessel · Hudson Yards':'Vessel Hudson Yards','High Line':'High Line park New York','Little Island':'Little Island Pier 55 New York','Chelsea Market':'Chelsea Market New York',"Cena en Hell's Kitchen":"Hell's Kitchen 9th Avenue restaurants",'Times Square de noche':'Times Square at night',
+'The Pond + Gapstow Bridge':'Gapstow Bridge Central Park winter','Vista a la pista Wollman':'Wollman Rink Central Park','The Mall':'The Mall Central Park literary walk','Bethesda Terrace al atardecer':'Bethesda Terrace Central Park sunset','Bow Bridge al anochecer':'Bow Bridge Central Park dusk','Almuerzo en Chelsea Market':'Chelsea Market food','Central Park Zoo':'Central Park Zoo','The Mall + Bethesda Terrace':'Bethesda Terrace Central Park','Summit One Vanderbilt':'Summit One Vanderbilt','Grand Central Terminal':'Grand Central Terminal main concourse','Biblioteca + Bryant Park Winter Village':'Bryant Park Winter Village','Árbol del Rockefeller Center':'Rockefeller Center Christmas tree','Luces de Saks + vidrieras de 5th Ave':'Saks Fifth Avenue holiday light show','Cena en Koreatown':'Koreatown Manhattan 32nd street night',"Vidrieras navideñas de Macy's":"Macy's Herald Square Christmas windows",'Patinar en Bryant Park (opcional)':'Bryant Park ice skating rink','Patinar en Wollman Rink (opcional)':'Wollman Rink ice skating Central Park',"Almuerzo en Katz's Delicatessen":"Katz's Delicatessen pastrami sandwich",'Teleférico de Roosevelt Island':'Roosevelt Island Tramway','Roosevelt Island · vista al skyline':'Roosevelt Island tram view Manhattan skyline',
+'Flatiron Building + Madison Square':'Flatiron Building','Union Square Holiday Market':'Union Square Holiday Market','Museo de Historia Natural':'American Museum of Natural History dinosaurs blue whale','Almuerzo en el Upper West Side':'Columbus Avenue Upper West Side restaurants','Washington Square Park':'Washington Square Park arch','West Village · Bleecker St':'West Village Bleecker Street','Perry St':'Perry Street West Village brownstones','Grove St y Bedford St':'17 Grove Street wooden house Grove Court','75½ Bedford St':'75 1/2 Bedford Street narrowest house','Commerce St':'Commerce Street West Village Cherry Lane Theatre','Harry Potter and the Cursed Child':'Harry Potter and the Cursed Child Lyric Theatre Broadway',"Porción en Joe's Pizza":"Joe's Pizza Broadway Times Square",
+'Columbus Circle':'Columbus Circle New York','Bethesda Fountain':'Bethesda Fountain Central Park','Bow Bridge':'Bow Bridge Central Park','Strawberry Fields':'Strawberry Fields Imagine mosaic','Belvedere Castle':'Belvedere Castle Central Park','Reservoir Jacqueline Kennedy Onassis':'Jacqueline Kennedy Onassis Reservoir skyline','Upper West Side + Levain Bakery':'Levain Bakery cookies Upper West Side','SoHo · Greene St':'Greene Street SoHo cast iron buildings','SoHo · Prince St y Broadway':'Prince Street Broadway SoHo shopping','SoHo · Mercer y Spring St':'Mercer Street SoHo','Nolita':'Nolita Elizabeth Street New York','Little Italy · Mulberry St':'Mulberry Street Little Italy Christmas','Chinatown · Mott St':'Mott Street Chinatown New York',"Pizza para llevar en Joe's (Carmine St)":"Joe's Pizza Carmine Street",'Cena con jazz en Cellar Dog':'Cellar Dog jazz bar Christopher Street',
+'Terminal del ferry (Whitehall)':'Whitehall Terminal Staten Island Ferry','Ferry a Staten Island':'Staten Island Ferry Statue of Liberty','Battery Park':'Battery Park Statue of Liberty view','Charging Bull':'Charging Bull Wall Street','Wall Street':'Wall Street New York Stock Exchange','Memorial 9/11':'9/11 Memorial pools','Oculus':'Oculus World Trade Center','Tribeca · cuartel de Ghostbusters':'Ghostbusters firehouse Hook and Ladder 8 Tribeca','Puente de Brooklyn':'Brooklyn Bridge walkway','DUMBO · Washington St':'DUMBO Washington Street Manhattan Bridge view','Brooklyn Bridge Park · Pier 1':'Brooklyn Bridge Park Pier 1 skyline sunset',"Merienda en Juliana's":"Juliana's Pizza Brooklyn",'Dyker Heights · luces de Navidad':'Dyker Heights Christmas lights','Cena en Restaurant Row':'Restaurant Row West 46th Street New York',
+'Williamsburg · Bedford Av':'Williamsburg Brooklyn Bedford Avenue','Artists & Fleas':'Artists and Fleas Williamsburg','Bedford Ave · vintage y cafés':'Bedford Avenue Williamsburg vintage shops','Domino Park':'Domino Park Williamsburg skyline','Moynihan Train Hall → Washington':'Moynihan Train Hall'};
+const photoUrl=n=>PH[n]?'https://www.google.com/search?tbm=isch&q='+encodeURIComponent(PH[n]):null;
+
+// ---------- PROJECTION ----------
+const B={lonMin:-74.13,lonMax:-73.86,latMin:40.58,latMax:40.84};
+const CS=Math.cos(40.72*Math.PI/180),K=5000;
+const W=(B.lonMax-B.lonMin)*CS*K,H=(B.latMax-B.latMin)*K;
+const P=ll=>[(ll[1]-B.lonMin)*CS*K,(B.latMax-ll[0])*K];
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('map');
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function smooth(pts,closed){ // catmull-rom
+  const p=pts.map(P),n=p.length;let d=`M${p[0][0].toFixed(1)},${p[0][1].toFixed(1)}`;
+  const g=i=>closed?p[(i+n)%n]:p[Math.max(0,Math.min(n-1,i))];
+  const last=closed?n:n-1;
+  for(let i=0;i<last;i++){const p0=g(i-1),p1=g(i),p2=g(i+1),p3=g(i+2);
+    d+=`C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;}
+  return d+(closed?'Z':'');
+}
+const line=pts=>'M'+pts.map(P).map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join('L');
+
+// ---------- BASE MAP ----------
+const gBase=el('g',{},svg),gLights=el('g',{id:'lights'},svg),gLabels=el('g',{},svg),gRoutes=el('g',{},svg),gDist=el('g',{},svg),gMarkers=el('g',{},svg),gWalker=el('g',{},svg);
+const MANH=[[40.7003,-74.0150],[40.7045,-74.0185],[40.7110,-74.0168],[40.7200,-74.0128],[40.7300,-74.0108],[40.7380,-74.0098],[40.7450,-74.0088],[40.7520,-74.0070],[40.7600,-74.0010],[40.7700,-73.9935],[40.7800,-73.9875],[40.7900,-73.9800],[40.8000,-73.9725],[40.8150,-73.9620],[40.8450,-73.9460],[40.8450,-73.9300],[40.8100,-73.9330],[40.8000,-73.9300],[40.7930,-73.9370],[40.7850,-73.9410],[40.7760,-73.9430],[40.7680,-73.9490],[40.7600,-73.9570],[40.7520,-73.9650],[40.7440,-73.9710],[40.7360,-73.9735],[40.7270,-73.9725],[40.7190,-73.9740],[40.7120,-73.9770],[40.7100,-73.9830],[40.7085,-73.9960],[40.7060,-74.0010],[40.7030,-74.0080],[40.7008,-74.0125]];
+const BKQ=[[40.8450,-73.9150],[40.7950,-73.9150],[40.7800,-73.9230],[40.7700,-73.9350],[40.7620,-73.9450],[40.7550,-73.9540],[40.7470,-73.9590],[40.7390,-73.9610],[40.7300,-73.9605],[40.7220,-73.9615],[40.7160,-73.9660],[40.7100,-73.9700],[40.7050,-73.9760],[40.7030,-73.9830],[40.7042,-73.9900],[40.7032,-73.9950],[40.7000,-73.9990],[40.6930,-74.0010],[40.6860,-74.0040],[40.6800,-74.0120],[40.6750,-74.0190],[40.6650,-74.0140],[40.6550,-74.0180],[40.6450,-74.0260],[40.6350,-74.0360],[40.6220,-74.0420],[40.6080,-74.0400],[40.5700,-74.0300],[40.5700,-73.8500],[40.8450,-73.8500]];
+const NJ=[[40.8450,-73.9620],[40.8150,-73.9780],[40.8000,-73.9870],[40.7850,-73.9990],[40.7700,-74.0080],[40.7600,-74.0160],[40.7500,-74.0230],[40.7400,-74.0260],[40.7300,-74.0280],[40.7200,-74.0320],[40.7100,-74.0330],[40.7000,-74.0380],[40.6920,-74.0480],[40.6850,-74.0560],[40.6750,-74.0640],[40.6650,-74.0700],[40.6560,-74.0730],[40.6500,-74.0850],[40.6480,-74.1400],[40.8450,-74.1400]];
+const SI=[[40.6440,-74.1400],[40.6440,-74.0900],[40.6430,-74.0765],[40.6380,-74.0710],[40.6250,-74.0660],[40.6100,-74.0610],[40.5960,-74.0640],[40.5700,-74.0700],[40.5700,-74.1400]];
+const GOV=[[40.6935,-74.0145],[40.6905,-74.0115],[40.6860,-74.0160],[40.6840,-74.0230],[40.6875,-74.0240],[40.6915,-74.0190]];
+const CP=[[40.7644,-73.9730],[40.7681,-73.9819],[40.8006,-73.9580],[40.7968,-73.9493]];
+const RES=[[40.7815,-73.9640],[40.7832,-73.9603],[40.7868,-73.9580],[40.7893,-73.9586],[40.7890,-73.9617],[40.7862,-73.9655],[40.7830,-73.9666]];
+el('path',{d:smooth(NJ,true),class:'land'},gBase);
+el('path',{d:smooth(SI,true),class:'land'},gBase);
+el('path',{d:smooth(BKQ,true),class:'land',id:'bkq'},gBase);
+el('path',{d:smooth(GOV,true),class:'land'},gBase);
+const manhPath=el('path',{d:smooth(MANH,true),class:'manh',id:'manh'},gBase);
+el('path',{d:line(CP)+'Z',class:'park'},gBase);
+el('path',{d:smooth(RES,true),class:'res'},gBase);
+// small parks
+[[40.7536,-73.9840,.0012],[40.7308,-73.9973,.0011],[40.7420,-73.9880,.0010],[40.7359,-73.9905,.0009],[40.7033,-74.0165,.0014],[40.7005,-73.9965,.0010],[40.7148,-73.9668,.0007]].forEach(([a,b,r])=>{const c=P([a,b]);el('circle',{cx:c[0],cy:c[1],r:r*K,class:'park'},gBase);});
+// streets
+[[[40.7040,-74.0130],[40.7130,-74.0080],[40.7250,-73.9975],[40.7340,-73.9910],[40.7411,-73.9897],[40.7505,-73.9875],[40.7580,-73.9855],[40.7681,-73.9819],[40.7800,-73.9810],[40.7950,-73.9720]],
+ [[40.7315,-73.9970],[40.7411,-73.9897],[40.7530,-73.9810],[40.7644,-73.9730]],[[40.7968,-73.9493],[40.8040,-73.9440]],
+ [[40.7625,-74.0010],[40.7480,-73.9685]],[[40.7420,-74.0085],[40.7290,-73.9760]],[[40.7285,-74.0105],[40.7200,-73.9790]],[[40.7225,-74.0080],[40.7155,-73.9935]],
+ [[40.7681,-73.9819],[40.7590,-73.9935],[40.7402,-74.0030],[40.7310,-74.0060]],[[40.7174,-73.9567],[40.7120,-73.9640]]
+].forEach(s=>el('path',{d:line(s),class:'street'},gBase));
+// bridges
+[[[40.7110,-74.0040],[40.7065,-73.9985],[40.7030,-73.9935],[40.7000,-73.9905]],[[40.7140,-73.9950],[40.7030,-73.9870]],[[40.7180,-73.9850],[40.7100,-73.9600]],[[40.7600,-73.9620],[40.7520,-73.9430]]].forEach(b=>el('path',{d:line(b),class:'bridge'},gBase));
+
+// ---------- SCALED ITEMS ----------
+const scaled=[];
+function addScaled(node,ll,rot){const p=P(ll);scaled.push({node,x:p[0],y:p[1],r:rot||0});return node;}
+// labels
+const LBL=[
+ ['Río Hudson',[40.7790,-74.0010],-60,'water-lbl'],['East River',[40.7380,-73.9670],-78,'water-lbl'],['Upper Bay',[40.6650,-74.0420],0,'water-lbl'],
+ ['New Jersey',[40.7550,-74.0700],0,'boro-lbl'],['Brooklyn',[40.6750,-73.9550],0,'boro-lbl'],['Queens',[40.7650,-73.9100],0,'boro-lbl'],['Staten Island',[40.6120,-74.1050],0,'boro-lbl'],['Manhattan',[40.7900,-73.9520],-61,'boro-lbl'],
+ ['Central Park',[40.7845,-73.9690],-61,'hood-lbl'],['Midtown',[40.7555,-73.9790],0,'hood-lbl'],["Hell's Kitchen",[40.7650,-73.9925],0,'hood-lbl'],['Hudson Yards',[40.7560,-74.0045],0,'hood-lbl'],['Chelsea',[40.7480,-73.9990],0,'hood-lbl'],['Meatpacking',[40.7395,-74.0050],0,'hood-lbl'],['Flatiron',[40.7395,-73.9870],0,'hood-lbl'],['West Village',[40.7355,-74.0060],0,'hood-lbl'],['Greenwich Village',[40.7290,-73.9975],0,'hood-lbl'],['SoHo',[40.7225,-74.0020],0,'hood-lbl'],['Nolita',[40.7245,-73.9935],0,'hood-lbl'],['Little Italy',[40.7200,-73.9955],0,'hood-lbl'],['Chinatown',[40.7148,-73.9970],0,'hood-lbl'],['Tribeca',[40.7185,-74.0100],0,'hood-lbl'],['FiDi',[40.7068,-74.0085],0,'hood-lbl'],['Upper West Side',[40.7880,-73.9765],-61,'hood-lbl'],['Upper East Side',[40.7740,-73.9560],-61,'hood-lbl'],['DUMBO',[40.7045,-73.9870],0,'hood-lbl'],['Brooklyn Heights',[40.6965,-73.9945],0,'hood-lbl'],['Williamsburg',[40.7115,-73.9555],0,'hood-lbl'],['Dyker Heights',[40.6200,-74.0110],0,'hood-lbl'],['Lower East Side',[40.7175,-73.9860],0,'hood-lbl']
+];
+LBL.forEach(([t,ll,r,c])=>{const g=el('g',{},gLabels);const tx=el('text',{class:c,'text-anchor':'middle'},g);tx.textContent=t;addScaled(g,ll,r);});
+const lib=el('text',{class:'liberty'},gLabels);lib.textContent='🗽';addScaled(lib,[40.6892,-74.0445]);
+
+// city lights inside Manhattan / Brooklyn
+(function(){let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+ const pt=svg.createSVGPoint?svg.createSVGPoint():null;const bk=document.getElementById('bkq');let made=0,tries=0;
+ while(made<260&&tries<4000){tries++;const lat=40.70+rnd()*0.10,lon=-74.02+rnd()*0.08;const p=P([lat,lon]);
+  let inside=false;try{const dp=new DOMPoint(p[0],p[1]);inside=manhPath.isPointInFill(dp)||(lat<40.725&&bk.isPointInFill(dp));}catch(e){inside=false}
+  if(!inside)continue;made++;el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:(0.5+rnd()*0.9).toFixed(2),class:'light',style:`animation-delay:${(rnd()*3).toFixed(2)}s;animation-duration:${(2+rnd()*3).toFixed(2)}s`},gLights);}
+})();
+
+// ---------- VIEWBOX / PAN-ZOOM ----------
+const wrap=document.getElementById('mapwrap');
+let vb={x:0,y:0,w:W,h:H},S=1;
+function rect(){return wrap.getBoundingClientRect();}
+function setVB(v){vb=v;svg.setAttribute('viewBox',`${v.x} ${v.y} ${v.w} ${v.h}`);updateScale();}
+function updateScale(){const r=rect();S=vb.w/Math.max(1,r.width);svg.style.setProperty('--s',S);
+ for(const s of scaled)s.node.setAttribute('transform',`translate(${s.x.toFixed(2)},${s.y.toFixed(2)}) scale(${S.toFixed(4)})${s.r?` rotate(${s.r})`:''}`);
+ svg.classList.toggle('hoods-off',S>0.5);
+ for(const l of legEls){if(l&&l.lab)l.lab.classList.toggle('tiny',l.L/S<(l.lab._w||80)+30);}
+ if(walker.visible)placeWalker(walker.x,walker.y);
+ // scale bar
+ const km=0.009*K/S; // px per 1 km
+ const sb=document.getElementById('scale');let lab='1 km',w=km;if(km>180){lab='500 m';w=km/2}else if(km<40){lab='5 km';w=km*5}
+ sb.querySelector('span').textContent=lab;sb.querySelector('div').style.width=w.toFixed(0)+'px';
+}
+function aspectFix(b){const r=rect(),ar=r.width/Math.max(1,r.height);let {x,y,w,h}=b;if(w/h>ar){const nh=w/ar;y-=(nh-h)/2;h=nh}else{const nw=h*ar;x-=(nw-w)/2;w=nw}return{x,y,w,h};}
+let flyRaf=0;
+function flyTo(t,ms=900){cancelAnimationFrame(flyRaf);const a={...vb},t0=performance.now();t=aspectFix(t);
+ return new Promise(res=>{const step=now=>{let k=Math.min(1,(now-t0)/ms);const e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+  setVB({x:a.x+(t.x-a.x)*e,y:a.y+(t.y-a.y)*e,w:a.w+(t.w-a.w)*e,h:a.h+(t.h-a.h)*e});if(k<1)flyRaf=requestAnimationFrame(step);else res();};flyRaf=requestAnimationFrame(step);});}
+function boundsOf(lls,pad=0.16,min=55){const ps=lls.map(P);let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;ps.forEach(([x,y])=>{x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)});
+ let w=Math.max(min,x1-x0),h=Math.max(min,y1-y0);const cx=(x0+x1)/2,cy=(y0+y1)/2;w*=1+pad*2;h*=1+pad*2;return{x:cx-w/2,y:cy-h/2,w,h};}
+function zoomAt(f,cx,cy){const r=rect();const px=cx-r.left,py=cy-r.top;const mx=vb.x+px*S,my=vb.y+py*S;let nw=Math.min(W*1.3,Math.max(25,vb.w*f));const k=nw/vb.w;
+ setVB({x:mx-(mx-vb.x)*k,y:my-(my-vb.y)*k,w:nw,h:vb.h*k});}
+wrap.addEventListener('wheel',e=>{e.preventDefault();cancelAnimationFrame(flyRaf);zoomAt(Math.exp(e.deltaY*0.0015),e.clientX,e.clientY);},{passive:false});
+const ptrs=new Map();let pinch0=null,moved=false;
+wrap.addEventListener('pointerdown',e=>{if(e.target.closest('.btn'))return;wrap.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;cancelAnimationFrame(flyRaf);if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a.x-b.x,a.y-b.y);}wrap.classList.add('drag');});
+wrap.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const prev=ptrs.get(e.pointerId);const cur={x:e.clientX,y:e.clientY};
+ if(ptrs.size===1){const dx=cur.x-prev.x,dy=cur.y-prev.y;if(Math.abs(dx)+Math.abs(dy)>2)moved=true;setVB({...vb,x:vb.x-dx*S,y:vb.y-dy*S});}
+ ptrs.set(e.pointerId,cur);
+ if(ptrs.size===2&&pinch0){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);moved=true;zoomAt(pinch0/d,(a.x+b.x)/2,(a.y+b.y)/2);pinch0=d;}});
+const up=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=null;if(!ptrs.size)wrap.classList.remove('drag');};
+wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up);
+document.getElementById('zin').onclick=()=>{const r=rect();cancelAnimationFrame(flyRaf);zoomAt(0.7,r.left+r.width/2,r.top+r.height/2)};
+document.getElementById('zout').onclick=()=>{const r=rect();cancelAnimationFrame(flyRaf);zoomAt(1.4,r.left+r.width/2,r.top+r.height/2)};
+document.getElementById('zfit').onclick=()=>fitCurrent();
+window.addEventListener('resize',()=>{setVB(aspectFix(vb));resizeSnow();});
+
+// ---------- WALKER ----------
+const walker={g:el('g',{class:'walker'},gWalker),visible:false,x:0,y:0};
+el('circle',{r:13},walker.g);const wTxt=el('text',{y:1},walker.g);walker.g.style.display='none';
+function placeWalker(x,y){walker.x=x;walker.y=y;walker.g.setAttribute('transform',`translate(${x},${y}) scale(${S})`);}
+function showWalker(on,icon){walker.visible=on;walker.g.style.display=on?'':'none';if(icon)wTxt.textContent=icon;}
+
+// ---------- STATE ----------
+let current=null,speed=1,runId=0,mkEls=[],legEls=[];
+const panel=document.getElementById('panel'),nowEl=document.getElementById('now');
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function clearMap(){gRoutes.innerHTML='';gDist.innerHTML='';gMarkers.innerHTML='';for(let i=scaled.length-1;i>=0;i--)if(scaled[i].dyn)scaled.splice(i,1);mkEls=[];legEls=[];showWalker(false);nowEl.classList.remove('on');}
+function setColor(c){document.documentElement.style.setProperty('--c',c);svg.style.setProperty('--dc',c);}
+
+function buildDay(d){
+  clearMap();setColor(d.color);
+  let prev=null,num=0;
+  d.stops.forEach((s,i)=>{
+    if(!s.ll){mkEls[i]=null;legEls[i]=null;return;}
+    if(prev){const pts=[prev,...(s.via||[]),s.ll];const m=s.m||'walk';
+      const gl=m==='walk'?el('path',{d:line(pts),class:'leg walk glow'},gRoutes):null;
+      const p=el('path',{d:line(pts),class:'leg '+m},gRoutes);legEls[i]={p,gl,m};
+      const h=legInfo(d,i);if(h){const L=p.getTotalLength(),mp=p.getPointAtLength(L/2);
+        const txt=h.m==='walk'?`🚶 ${fmtM(h.meters)} · ${h.blocks} cdra${h.blocks>1?'s':''} · ${h.min} min`:`${MODE[h.m].icon} ~${h.min} min · ${fmtM(h.meters)}`;
+        const g=el('g',{class:'dist'},gDist);const r=el('rect',{x:-40,y:-10,height:20,rx:10},g);const t=el('text',{},g);t.textContent=txt;
+        requestAnimationFrame(()=>{try{const w=t.getComputedTextLength()+16;r.setAttribute('width',w);r.setAttribute('x',-w/2);g._w=w;}catch(e){}});
+        scaled.push({node:g,x:mp.x,y:mp.y,r:0,dyn:true});legEls[i].lab=g;legEls[i].L=L;}}
+    else legEls[i]=null;
+    prev=s.ll;num++;
+    // marker (reuse same location -> offset label only)
+    const g=el('g',{class:'mk'+(s.opt?' opt':''),'data-i':i},gMarkers);
+    const pin=el('g',{class:'pin'},g);
+    el('circle',{class:'halo',r:12},pin);el('circle',{class:'dot',r:11},pin);
+    const t=el('text',{class:'num'},pin);t.textContent=num;
+    const lg=el('g',{class:'lbl'},pin);const rr=el('rect',{x:16,y:-12,height:24,rx:7},lg);const lt=el('text',{x:25,y:0},lg);lt.textContent=s.i+' '+s.n;
+    const o=addScaled(g,s.ll);scaled[scaled.length-1].dyn=true;
+    requestAnimationFrame(()=>{try{rr.setAttribute('width',lt.getComputedTextLength()+18)}catch(e){rr.setAttribute('width',200)}});
+    g.addEventListener('click',ev=>{if(moved)return;activate(i,true);});
+    mkEls[i]=g;
+  });
+  // a stop at the same coordinate as an earlier one: hide the earlier marker number when later shown
+  updateScale();
+}
+function hideAll(){legEls.forEach(l=>{if(!l)return;if(l.lab)l.lab.classList.remove('on');const L=l.p.getTotalLength();[l.p,l.gl].forEach(p=>{if(!p)return;p.style.strokeDasharray=`${L} ${L}`;p.style.strokeDashoffset=L;});});mkEls.forEach(m=>m&&m.classList.remove('show','active'));}
+function showAllStatic(){runId++;showWalker(false);nowEl.classList.remove('on');legEls.forEach(l=>{if(!l)return;if(l.lab)l.lab.classList.add('on');[l.p,l.gl].forEach(p=>{if(!p)return;p.style.strokeDasharray='';p.style.strokeDashoffset='';});});mkEls.forEach(m=>m&&m.classList.add('show'));}
+const legDur=l=>Math.max(1600,Math.min(5200,l.p.getTotalLength()*22))/speed;
+function animateLeg(l,my){return new Promise(res=>{const L=l.p.getTotalLength();const dur=legDur(l);const t0=performance.now();
+  showWalker(true,MODE[l.m].icon);
+  const step=now=>{if(my!==runId)return res();let k=Math.min(1,(now-t0)/dur);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    const off=L*(1-e);[l.p,l.gl].forEach(p=>{if(p){p.style.strokeDasharray=`${L} ${L}`;p.style.strokeDashoffset=off;}});
+    const pt=l.p.getPointAtLength(L*e);placeWalker(pt.x,pt.y);
+    if(k<1)requestAnimationFrame(step);else{[l.p,l.gl].forEach(p=>{if(p){p.style.strokeDasharray='';p.style.strokeDashoffset='';}});if(l.lab)l.lab.classList.add('on');res();}};
+  requestAnimationFrame(step);});}
+function dayBounds(d,withOpt){const b=boundsOf(d.stops.filter(s=>s.ll&&(withOpt||!s.opt)).flatMap(s=>[s.ll,...(s.via&&s.m==='walk'?s.via:[])]),0.2);const m=b.h*0.12;b.y-=m;b.h+=m;return b;}
+function fitCurrent(){if(current)flyTo(dayBounds(current,false),1400);else flyTo(boundsOf(DAYS.flatMap(d=>d.stops.filter(s=>s.ll&&!s.opt).map(s=>s.ll)),0.1),1600);}
+
+async function play(){
+  if(!current)return;const d=current,my=++runId;hideAll();
+  applyTime(toMin(d.stops[0].t));setFX(null);
+  await flyTo(dayBounds(d,false),1800);if(my!==runId)return;
+  for(let i=0;i<d.stops.length;i++){if(my!==runId)return;const s=d.stops[i];
+    setNow(s);highlightCard(i,false);
+    const tm=toMin(s.t);
+    if(!s.ll||!legEls[i])tweenTime(tm,(s.ll?1200:2200)/speed);
+    if(s.ll){if(s.opt){await flyTo(dayBounds(d,true),1800);if(my!==runId)return;}
+      if(legEls[i]){tweenTime(tm,legDur(legEls[i]));await animateLeg(legEls[i],my);}if(my!==runId)return;
+      if(!legEls[i]){const p=P(s.ll);placeWalker(p[0],p[1]);showWalker(true,'🚶');}
+      mkEls[i].classList.add('show');mkEls.forEach(m=>m&&m.classList.toggle('active',m===mkEls[i]));}
+    await wait(((s.ll?1500:2200)+(s.fx?5000:0))/speed);}
+  if(my===runId){showWalker(false);setTimeout(()=>{if(my===runId)nowEl.classList.remove('on')},1500);}
+}
+// ---- time of day engine ----
+const RISE=435,SET=990; // 7:15 / 16:30 (diciembre)
+const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
+const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const mix=(a,b,k)=>{const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*k)).join(',')+')';};
+const SKY=[[0,'#0b1715','#10221f','#152826'],[400,'#0b1715','#10221f','#152826'],[440,'#3d4a5a','#e28a6e','#FFCE36'],[520,'#9fe0d8','#c4efe9','#E9FBF8'],[900,'#9fe0d8','#c4efe9','#E9FBF8'],[985,'#4a3f5e','#e0745f','#FFCE36'],[1035,'#0b1715','#10221f','#152826'],[1440,'#0b1715','#10221f','#152826']];
+function skyAt(m){for(let i=0;i<SKY.length-1;i++){const a=SKY[i],b=SKY[i+1];if(m>=a[0]&&m<=b[0]){const k=(m-a[0])/Math.max(1,b[0]-a[0]);return [1,2,3].map(j=>mix(a[j],b[j],k));}}return SKY[0].slice(1);}
+let curMin=600,theme=null,timeRaf=0;
+const skyEl=document.getElementById('sky'),sunEl=document.getElementById('sun'),moonEl=document.getElementById('moon');
+function applyTime(m){curMin=m;const [c1,c2,c3]=skyAt(m);skyEl.style.background=`linear-gradient(180deg,${c1} 0%,${c2} 55%,${c3} 100%)`;
+  const p=(m-RISE)/(SET-RISE);const alt=Math.sin(Math.PI*Math.max(-.15,Math.min(1.15,p)));
+  // sale por el este (derecha), se pone por el oeste (izquierda)
+  const x=88-76*Math.max(-.1,Math.min(1.1,p)),y=82-62*alt;
+  sunEl.style.left=x+'%';sunEl.style.top=y+'%';
+  const a=Math.max(0,alt);sunEl.style.opacity=p<-.12||p>1.12?0:Math.min(1,(alt+.2)*2.5);
+  sunEl.style.setProperty('--sc1',mix('#ffd9a0','#fffbe6',Math.min(1,a*1.6)));
+  sunEl.style.setProperty('--sc2',mix('#ff5a36','#ffe680',Math.min(1,a*1.4)));
+  sunEl.style.setProperty('--sc3',mix('#ff3d5a','#ffcf5a',Math.min(1,a*1.4)));
+  sunEl.style.setProperty('--ss',(1.6-a*.7).toFixed(2));
+  const dz=Math.max(0,1-Math.min(Math.abs(m-SET),Math.abs(m-RISE))/55);document.getElementById('tint').style.background=`linear-gradient(200deg,rgba(255,130,70,${(dz*.28).toFixed(3)}) 0%,rgba(200,70,120,${(dz*.18).toFixed(3)}) 50%,rgba(90,60,170,${(dz*.2).toFixed(3)}) 100%)`;
+  // luna: sale por el este cuando oscurece
+  const q=(m-SET-20)/360;moonEl.style.opacity=q<0?0:Math.min(.95,q*4);moonEl.style.left=(86-30*Math.max(0,q))+'%';moonEl.style.top=(70-50*Math.min(1,Math.max(0,q)*1.4))+'%';
+  const th=(m>=480&&m<930)?'day':((m>=420&&m<480)||(m>=930&&m<1020))?'dusk':'night';
+  if(th!==theme){theme=th;wrap.classList.toggle('t-day',th==='day');wrap.classList.toggle('t-dusk',th==='dusk');}
+  const hh=Math.floor(m/60),mm=Math.round(m%60/5)*5%60;const lab=th==='day'?'☀️ Día':th==='dusk'?(m<720?'🌅 Amanecer':'🌇 Atardecer'):'🌙 Noche';
+  document.getElementById('tod').textContent=`${lab} · ${hh}:${String(mm).padStart(2,'0')}`;}
+function tweenTime(to,ms){cancelAnimationFrame(timeRaf);const from=curMin,t0=performance.now();ms=Math.max(1,ms);
+  const step=now=>{const k=Math.min(1,(now-t0)/ms);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;applyTime(from+(to-from)*e);if(k<1)timeRaf=requestAnimationFrame(step);};timeRaf=requestAnimationFrame(step);}
+function setTheme(th,t){applyTime(t?toMin(t):720);}
+// ---- special effects ----
+const fxEl=document.getElementById('fx');let fxName=null,altiTimer=0;
+function setFX(name){if(name===fxName)return;fxName=name;fxEl.innerHTML='';clearInterval(altiTimer);snowMode=name==='magic'?'magic':'snow';if(!name)return;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  if(name==='magic'){
+    fxEl.insertAdjacentHTML('beforeend','<div class="vignette magic"></div><div class="bolt">⚡</div><div class="owl">🦉<span>✉️</span></div><div class="fx-title">✨ Noche de magia en Broadway ✨</div>');
+    for(let i=0;i<16;i++){const c=document.createElement('div');c.className='candle';c.style.left=rnd(4,94)+'%';c.style.top=rnd(8,70)+'%';c.style.setProperty('--d',rnd(3.5,7).toFixed(1)+'s');c.style.transform=`scale(${rnd(.7,1.2).toFixed(2)})`;fxEl.appendChild(c);setTimeout(()=>c.style.opacity=1,300+i*180);}
+  }
+  if(name==='summit'){
+    fxEl.insertAdjacentHTML('beforeend','<div class="vignette summit"></div><div class="mirror"></div><div class="sheen"></div><div class="alti">🛗 Subiendo<b id="altv">0 ft</b>sobre Manhattan</div><div class="fx-title" style="color:#eef3fb;text-shadow:0 0 18px #fff,0 0 40px #9fb6ff">Summit · el cielo espejado</div>');
+    for(let i=0;i<14;i++){const b=document.createElement('div');b.className='balloon';b.style.left=rnd(2,95)+'%';b.style.setProperty('--d',rnd(16,26).toFixed(1)+'s');b.style.setProperty('--dl',(-rnd(0,20)).toFixed(1)+'s');const sc=rnd(.6,1.3);b.style.width=46*sc+'px';b.style.height=54*sc+'px';fxEl.appendChild(b);}
+    let v=0;altiTimer=setInterval(()=>{v=Math.min(1000,v+20);const e=document.getElementById('altv');if(e)e.textContent=v.toLocaleString('es-AR')+' ft';if(v>=1000){clearInterval(altiTimer);const a=fxEl.querySelector('.alti');if(a)a.firstChild.textContent='🏙️ Llegaste';}},45);
+  }}
+function setNow(s){setFX(s.fx||null);const u=photoUrl(s.n);nowEl.innerHTML=`<b>${s.t}</b> · ${s.i} ${s.n}${u?` · <a href="${u}" target="_blank" rel="noopener" style="color:var(--c)">📷 fotos</a>`:''}`;nowEl.classList.add('on');}
+function highlightCard(i,scroll=true){panel.querySelectorAll('.tl li').forEach(li=>li.classList.toggle('active',+li.dataset.i===i));
+  const li=panel.querySelector(`.tl li[data-i="${i}"]`);if(li){const pr=panel.getBoundingClientRect(),lr=li.getBoundingClientRect();if(lr.top<pr.top+40||lr.bottom>pr.bottom-20)panel.scrollTop+=lr.top-pr.top-pr.height*0.3;}}
+function activate(i,fromMap){if(!current)return;runId++;showAllStatic();const s=current.stops[i];highlightCard(i);setNow(s);tweenTime(toMin(s.t),2600);
+  mkEls.forEach(m=>m&&m.classList.toggle('active',m===mkEls[i]));
+  if(s.ll&&!fromMap){const p=P(s.ll);const w=Math.min(vb.w,140);const h=w*vb.h/vb.w;flyTo({x:p[0]-w/2,y:p[1]-h/2,w,h},1600);}
+  if(s.ll){const p=P(s.ll);placeWalker(p[0],p[1]);showWalker(true,s.i);}
+}
+
+// ---------- PANEL ----------
+let rvObs=null;
+function reveal(){if(rvObs)rvObs.disconnect();const els=panel.querySelectorAll('.tl li,.wcard,.tip,.stat,.links a');
+  if(!('IntersectionObserver' in window)){return;}
+  rvObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvObs.unobserve(e.target);}}),{root:panel,threshold:.08});
+  els.forEach((el,k)=>{el.classList.add('rv');el.style.transitionDelay=Math.min(k,8)*40+'ms';rvObs.observe(el);});}
+// ---- distancias entre puntos ----
+const A29=29*Math.PI/180;
+function legInfo(d,i){const s=d.stops[i];if(!s.ll)return null;let prev=null;for(let j=i-1;j>=0;j--)if(d.stops[j].ll){prev=d.stops[j].ll;break;}if(!prev)return null;
+  const pts=[prev,...(s.via||[]),s.ll];const m=s.m||'walk';let grid=0,straight=0,ns=0,ew=0;
+  for(let k=1;k<pts.length;k++){const a=pts[k-1],b=pts[k];const lat=(a[0]+b[0])/2*Math.PI/180;const dx=(b[1]-a[1])*Math.cos(lat)*111320,dy=(b[0]-a[0])*110540;
+    const n1=Math.abs(dx*Math.sin(A29)+dy*Math.cos(A29)),e1=Math.abs(dx*Math.cos(A29)-dy*Math.sin(A29));ns+=n1;ew+=e1;grid+=n1+e1;straight+=Math.hypot(dx,dy);}
+  if(grid<15&&m==='walk')return null;
+  const wm=Math.min(grid,straight*1.15),r=wm/Math.max(1,grid);
+  const km=straight/1000,tmin=m==='subway'?Math.round(8+km*2.2):m==='ferry'?25:m==='tram'?4:0;
+  return {m,meters:m==='walk'?wm:straight,blocks:Math.max(1,Math.round((ns/80+ew/260)*r)),min:m==='walk'?Math.max(1,Math.round(wm/80)):Math.max(5,Math.round(tmin/5)*5||tmin)};}
+const fmtM=x=>x<1000?(Math.round(x/10)*10)+' m':(x/1000).toFixed(1).replace('.',',')+' km';
+function hopHTML(h){if(!h)return '';if(h.m==='walk')return `<li class="hop">🚶 <b>${fmtM(h.meters)}</b> · ~${h.blocks} cuadra${h.blocks>1?'s':''} · ~${h.min} min a pie</li>`;
+  return `<li class="hop">${MODE[h.m].icon} <b>~${h.min} min</b> en ${MODE[h.m].name} · ${fmtM(h.meters)}${h.m==='subway'?' (incluye caminar a la estación y esperar)':''}</li>`;}
+const INSIDE={'POD Times Square · ¡Sorpresa!':90,'POD Times Square · ¡Encuentro!':90,"Cena en Hell's Kitchen":90,'Almuerzo en Chelsea Market':75,'Summit One Vanderbilt':90,'Grand Central Terminal':30,'Cena en Koreatown':90,
+'Brunch':60,'Museo de Historia Natural':150,'Almuerzo en el Upper West Side':60,'Merienda-cena liviana':45,'Harry Potter and the Cursed Child':210,"Porción en Joe's Pizza":20,
+'Upper West Side + Levain Bakery':75,'SoHo · Greene St':45,'SoHo · Prince St y Broadway':40,'SoHo · Mercer y Spring St':30,'Nolita':25,'Chinatown · Mott St':15,'Cena con jazz en Cellar Dog':120,
+'Oculus':20,"Almuerzo en Katz's Delicatessen":60,"Merienda en Juliana's":45,'Cena en Restaurant Row':90,
+'Artists & Fleas':40,'Bedford Ave · vintage y cafés':30,'Almuerzo en Williamsburg':60};
+const fmtHM=m=>{m=Math.round(m/5)*5;const h=Math.floor(m/60),r=m%60;return h?`${h}:${String(r).padStart(2,'0')} h`:`${r} min`;};
+function dayStats(d){let wm=0,wmin=0,inside=0;d.stops.forEach((s,i)=>{const h=legInfo(d,i);if(h&&h.m==='walk'&&!s.opt){wm+=h.meters;wmin+=h.min;}if(!s.opt)inside+=INSIDE[s.n]||0;});return {km:(wm/1000).toFixed(1).replace('.',','),wmin,inside};}
+function renderDay(d){let n=0;const st=dayStats(d);
+ panel.innerHTML=`<div class="dayhead"><div class="dnum">${d.short}</div><div><div class="ddate">${d.date}</div><h2>${d.title}</h2></div></div>
+ <div class="stats four"><div class="stat"><b>🚶 ~${st.km} km</b><span>caminata total del día</span></div><div class="stat"><b>⏱ ~${fmtHM(st.wmin)}</b><span>caminando (neto)</span></div><div class="stat"><b>🏠 ~${fmtHM(st.inside)}</b><span>adentro de lugares (sin hotel)</span></div><div class="stat"><b>💵 ${d.cost.split(' ')[0]}</b><span>p/p aprox${d.cost.includes('+')?' + compras':''}</span></div></div>
+ <p class="statnote">Caminata medida entre puntos: sumen lo que paseen dentro de cada lugar (Central Park, SoHo, tiendas). "Adentro" = restaurantes, tiendas, Summit, teatro y bares, sin contar el hotel.</p>
+ <div class="chips">${d.hoods.map(h=>`<span>📍 ${h}</span>`).join('')}</div>
+ ${d.tip?`<div class="tip">💡 ${d.tip}</div>`:''}
+ <ol class="tl">${d.stops.map((s,i)=>{const num=s.ll?++n:null;const md=s.m&&s.m!=='walk'?`<span class="mode">${MODE[s.m].icon} en ${MODE[s.m].name}</span>`:'';
+  return hopHTML(legInfo(d,i))+`<li data-i="${i}" class="${s.opt?'opt':''}"><div class="badge ${num?'':'nomap'}">${num??s.i}</div><div class="body"><div class="row1"><span class="time">${s.t}</span>${md}${s.opt?'<span class="mode">opcional</span>':''}</div><div class="name">${s.i} ${s.n}</div>${s.x?`<p>${s.x}</p>`:''}<div class="meta">${s.d?`<span>⏱ ${s.d}</span>`:''}${s.c?`<span>💵 ${s.c}</span>`:''}</div>${photoUrl(s.n)?`<a class="photo" href="${photoUrl(s.n)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📷 Ver fotos</a>`:''}</div></li>`}).join('')}</ol>
+ <div class="links"><h3>Abrir en Google Maps</h3>${d.links.map(l=>`<a href="${l.u}" target="_blank" rel="noopener">${l.l}<span>↗</span></a>`).join('')}</div>
+ <div class="foot">Recorridos aproximados sobre un mapa simplificado. Costos estimados por persona. Para navegar en vivo, usen los links de Google Maps.</div>`;
+ panel.querySelectorAll('.tl li[data-i]').forEach(li=>li.onclick=()=>activate(+li.dataset.i,false));
+ panel.scrollTop=0;reveal();}
+function renderWeek(){
+ const chus=profile==='chus';const nHoods=new Set(DAYS.flatMap(d=>d.hoods)).size;
+ panel.innerHTML=`<div class="marquee"><div>caminar · comer pizza · patinar · jazz · luces de Navidad · Central Park · SoHo · pastrami · teleférico · ${chus?'la nena y los dinos 🦕 ·':'Harry Potter ⚡ ·'} caminar un poco más ·</div></div><div class="weekwrap"><div class="sticker">¡nos<br>vamos<br>a NY!</div><h2 class="hero" style="padding-right:100px">${chus?'3 días con los Pipis en Nueva York 🎄':'5 días y medio caminando Nueva York 🎄'}</h2><p class="lead" style="padding-right:90px">${chus?'Tres rutas pensadas con la nena: paseos tranquilos, cochecito y siesta.':'Seis rutas, todo a pie y en subte.'} Tocá un día para ver la ruta animada, o arrastrá y hacé zoom en el mapa.</p></div>
+ <div class="stats"><div class="stat"><b>🚶 ~${DAYS.reduce((a,d)=>a+parseFloat(dayStats(d).km.replace(',','.')),0).toFixed(0)} km</b><span>en total</span></div><div class="stat"><b>📍 ${nHoods}</b><span>barrios</span></div><div class="stat"><b>🌅 16:30</b><span>atardecer</span></div></div>
+ <h3 class="sec" style="margin-top:8px">Los días</h3><div class="weekgrid">${DAYS.map(d=>`<div class="wcard" style="--wc:${d.color}" data-id="${d.id}"><div class="dnum">${d.short}</div><div><h4>${d.title}</h4><p>🚶 ~${dayStats(d).km} km · 🏠 ~${fmtHM(dayStats(d).inside)} adentro · ${d.hoods.slice(0,4).join(' · ')}</p></div></div>`).join('')}</div>
+ <div class="tip" style="margin-top:16px">❄️ Diciembre: máximas de ~4–6 °C y noche a las 16:30. Ropa en capas, gorro, guantes y calzado impermeable.</div>
+ <div class="tip">🌙 Noches: cenas entre las 20:30 y las 21 (reserven: muchas cocinas cierran a las 22–23) y planes nocturnos hasta las ~23.</div>
+ ${chus?'':'<div class="tip">🛍️ Outlets: mejor en Washington desde el 26 (rebajas post-Navidad). En NY, ropa y calzado de menos de US$110 por prenda no paga impuesto.</div>'}
+ <div class="tip">🚇 Subte: paguen tocando con tarjeta contactless o celular (OMNY). Después de 12 viajes en la semana, el resto sale gratis.</div>`;
+ panel.querySelectorAll('.wcard').forEach(c=>c.onclick=()=>go(c.dataset.id));panel.scrollTop=0;reveal();}
+function buildWeek(){clearMap();setColor('#ffd166');
+ DAYS.forEach(d=>{let prev=null;d.stops.forEach(s=>{if(!s.ll)return;if(prev&&!s.opt){const p=el('path',{d:line([prev,...(s.via||[]),s.ll]),class:'leg '+(s.m||'walk')+' dim',style:`--dc:${d.color}`},gRoutes);}prev=s.ll;});
+  d.stops.forEach(s=>{if(!s.ll||s.opt)return;const g=el('g',{class:'ov-dot',style:`--dc:${d.color}`},gMarkers);el('circle',{r:5.5},g);const tt=el('title',{},g);tt.textContent=`${d.tab} · ${s.n}`;addScaled(g,s.ll);scaled[scaled.length-1].dyn=true;g.addEventListener('click',()=>{if(!moved)go(d.id)});});});
+ updateScale();}
+
+// ---------- SEARCH ----------
+const norm=t=>(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const qEl=document.getElementById('q'),resEl=document.getElementById('res');let resItems=[],resSel=0;
+function doSearch(){const q=norm(qEl.value.trim());if(q.length<2){resEl.classList.remove('on');return;}
+  resItems=[];DAYS.forEach(d=>d.stops.forEach((s,i)=>{const hay=norm(s.n+' '+(s.x||'')+' '+(PH[s.n]||''));if(hay.includes(q))resItems.push({d,i,s,score:norm(s.n).includes(q)?0:1});}));
+  resItems.sort((a,b)=>a.score-b.score);resItems=resItems.slice(0,10);resSel=0;
+  resEl.innerHTML=resItems.length?resItems.map((r,k)=>{const [w,n]=r.d.tab.split(' ');return `<a data-k="${k}" class="${k===0?'sel':''}"><b class="bullet" style="--tc:${r.d.color}">${n}</b><span><b>${r.s.i} ${r.s.n}</b><small>${w} ${n} dic · ${r.s.t}${r.s.opt?' · opcional':''}</small></span></a>`}).join(''):'<div class="none">No está en el itinerario 🤷</div>';
+  resEl.classList.add('on');resEl.querySelectorAll('a').forEach(a=>a.onclick=()=>pick(+a.dataset.k));}
+function pick(k){const r=resItems[k];if(!r)return;resEl.classList.remove('on');qEl.value='';qEl.blur();go(r.d.id,false);setTimeout(()=>activate(r.i,false),60);}
+qEl.addEventListener('input',doSearch);qEl.addEventListener('focus',doSearch);
+qEl.addEventListener('keydown',e=>{const as=resEl.querySelectorAll('a');if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();resSel=(resSel+(e.key==='ArrowDown'?1:-1)+as.length)%Math.max(1,as.length);as.forEach((a,k)=>a.classList.toggle('sel',k===resSel));}else if(e.key==='Enter'){pick(resSel);}else if(e.key==='Escape'){resEl.classList.remove('on');qEl.blur();}});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))resEl.classList.remove('on');});
+
+// ---------- ROUTING ----------
+const tabs=document.getElementById('tabs');
+function buildTabs(){tabs.innerHTML=`<button class="tab" data-id="semana" style="--tc:#f7c600"><b class="bullet">NY</b>Semana</button>`+DAYS.map(d=>{const [w,n]=d.tab.split(' ');return `<button class="tab" data-id="${d.id}" style="--tc:${d.color}"><b class="bullet">${n}</b>${w}${d.tab.includes('⭐')?' ⭐':''}</button>`}).join('');
+tabs.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.id));}
+function go(id,auto=true){if(location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+ tabs.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('on',t.dataset.id===id);if(t.dataset.id===id)t.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});});
+ runId++;const d=DAYS.find(x=>x.id===id);
+ document.getElementById('playBtn').style.display=d?'':'none';document.getElementById('allBtn').style.display=d?'':'none';document.getElementById('speedBtn').style.display=d?'':'none';
+ if(!d){current=null;setFX(null);applyTime(720);buildWeek();renderWeek();fitCurrent();return;}
+ current=d;setFX(null);applyTime(toMin(d.stops[0].t));buildDay(d);renderDay(d);hideAll();if(auto)play();}
+window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(PROFILES[id]){setProfile(id);return;}if(id&&(id==='semana'||DAYS.some(d=>d.id===id)))go(id);});
+document.getElementById('playBtn').onclick=()=>play();
+document.getElementById('allBtn').onclick=()=>{showAllStatic();flyTo(dayBounds(current,true),1400);};
+document.getElementById('speedBtn').onclick=e=>{speed=speed===1?2:speed===2?4:1;e.target.textContent=speed+'×';};
+
+// ---------- SNOW ----------
+const cv=document.getElementById('snow'),cx=cv.getContext('2d');let flakes=[],snowMode='snow';
+function resizeSnow(){const r=rect(),dpr=window.devicePixelRatio||1;cv.width=r.width*dpr;cv.height=r.height*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+ flakes=Array.from({length:Math.round(r.width*r.height/9000)},()=>({x:Math.random()*r.width,y:Math.random()*r.height,r:.6+Math.random()*1.8,v:.25+Math.random()*.7,w:Math.random()*6.28}));}
+function snow(){const r=rect();cx.clearRect(0,0,r.width,r.height);
+ if(snowMode==='magic'){for(const f of flakes){f.y-=f.v*.5;f.w+=.03;f.x+=Math.sin(f.w)*.5;if(f.y<-6){f.y=r.height+4;f.x=Math.random()*r.width}const tw=.5+.5*Math.sin(f.w*3);cx.globalAlpha=.3+.7*tw;cx.fillStyle=f.r>1.6?'#fff3c4':'#ffcf5a';cx.beginPath();cx.arc(f.x,f.y,f.r*(.6+tw*.8),0,6.28);cx.fill();if(f.r>2){cx.fillRect(f.x-f.r*2.5,f.y-.4,f.r*5,.8);cx.fillRect(f.x-.4,f.y-f.r*2.5,.8,f.r*5);}}}
+ else{cx.fillStyle=theme==='day'?'rgba(120,150,190,.55)':'rgba(255,255,255,.75)';
+ for(const f of flakes){f.y+=f.v*.7;f.w+=.008;f.x+=Math.sin(f.w)*.3;if(f.y>r.height){f.y=-4;f.x=Math.random()*r.width}cx.beginPath();cx.globalAlpha=.35+f.r/4;cx.arc(f.x,f.y,f.r,0,6.28);cx.fill();}}
+ cx.globalAlpha=1;requestAnimationFrame(snow);}
+
+// ---------- INIT ----------
+setVB(aspectFix({x:0,y:0,w:W,h:H}));resizeSnow();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)snow();
+const start=location.hash.slice(1);let saved=null;try{saved=localStorage.getItem('nyc-profile')}catch(e){}
+if(PROFILES[start])setProfile(start);else if(PROFILES[saved])setProfile(saved,start);else{DAYS=ALL_DAYS;buildTabs();go('semana');document.getElementById('picker').classList.add('on');}
+document.getElementById('who').onclick=()=>document.getElementById('picker').classList.add('on');
+document.querySelectorAll('.pcard').forEach(c=>c.onclick=()=>setProfile(c.dataset.p));
+</script>
+</body>
+</html>
