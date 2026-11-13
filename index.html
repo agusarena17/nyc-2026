@@ -429,6 +429,8 @@ aside{display:flex;flex-direction:column;overflow:hidden;padding:0!important}
 .sunedge{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .6s;background:radial-gradient(circle,var(--ec,#ffd27a) 0%,rgba(255,200,90,.35) 30%,rgba(255,190,90,0) 68%)}
 
 .sunlight{position:absolute;inset:0;pointer-events:none;z-index:1;transition:background .6s}
+#map .shd{fill:#2a1c0f!important;stroke:none!important;opacity:var(--sha,0);transform:translate(var(--shx,0),var(--shy,0));filter:none!important}
+.walker circle.shd{filter:none}
 </style>
 </head>
 <body>
@@ -719,7 +721,7 @@ function updateScale(){const r=rect();S=vb.w/Math.max(1,r.width);svg.style.setPr
  if(walker.visible)placeWalker(walker.x,walker.y);
  // scale bar
  const km=0.009*K/S; // px per 1 km
- const sb=document.getElementById('scale');let lab='1 km',w=km;if(km>180){lab='500 m';w=km/2}else if(km<40){lab='5 km';w=km*5}
+ const sb=document.getElementById('scale');let lab='1 km',w=km;for(const [d,l] of [[.1,'100 m'],[.25,'250 m'],[.5,'500 m'],[1,'1 km'],[2,'2 km'],[5,'5 km'],[10,'10 km']]){if(km*d>=50){lab=l;w=km*d;break;}}
  sb.querySelector('span').textContent=lab;sb.querySelector('div').style.width=w.toFixed(0)+'px';
 }
 function aspectFix(b){const r=rect(),ar=r.width/Math.max(1,r.height);let {x,y,w,h}=b;if(w/h>ar){const nh=w/ar;y-=(nh-h)/2;h=nh}else{const nw=h*ar;x-=(nw-w)/2;w=nw}return{x,y,w,h};}
@@ -749,7 +751,7 @@ function fitVisible(b){const f=visibleFrac();if(f>=.999)return aspectFix(b);cons
 })();
 function boundsOf(lls,pad=0.16,min=55){const ps=lls.map(P);let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;ps.forEach(([x,y])=>{x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)});
  let w=Math.max(min,x1-x0),h=Math.max(min,y1-y0);const cx=(x0+x1)/2,cy=(y0+y1)/2;w*=1+pad*2;h*=1+pad*2;return{x:cx-w/2,y:cy-h/2,w,h};}
-function zoomAt(f,cx,cy){const r=rect();const px=cx-r.left,py=cy-r.top;const mx=vb.x+px*S,my=vb.y+py*S;let nw=Math.min(W*1.3,Math.max(25,vb.w*f));const k=nw/vb.w;
+function zoomAt(f,cx,cy){const r=rect();const px=cx-r.left,py=cy-r.top;const mx=vb.x+px*S,my=vb.y+py*S;let nw=Math.min(W*1.3,Math.max(70,vb.w*f));const k=nw/vb.w;
  setVB({x:mx-(mx-vb.x)*k,y:my-(my-vb.y)*k,w:nw,h:vb.h*k});}
 wrap.addEventListener('wheel',e=>{e.preventDefault();cancelAnimationFrame(flyRaf);zoomAt(Math.exp(e.deltaY*0.0015),e.clientX,e.clientY);},{passive:false});
 const ptrs=new Map();let pinch0=null,moved=false;
@@ -767,7 +769,7 @@ window.addEventListener('resize',()=>{setVB(aspectFix(vb));resizeSnow();});
 
 // ---------- WALKER ----------
 const walker={g:el('g',{class:'walker'},gWalker),visible:false,x:0,y:0};
-el('circle',{r:13},walker.g);const wTxt=el('text',{y:1},walker.g);walker.g.style.display='none';
+el('circle',{class:'shd',r:13},walker.g);el('circle',{r:13},walker.g);const wTxt=el('text',{y:1},walker.g);walker.g.style.display='none';
 function placeWalker(x,y){walker.x=x;walker.y=y;walker.g.setAttribute('transform',`translate(${x},${y}) scale(${S})`);}
 function showWalker(on,icon){walker.visible=on;walker.g.style.display=on?'':'none';if(icon)wTxt.textContent=icon;}
 
@@ -796,7 +798,7 @@ function buildDay(d){
     // marker (reuse same location -> offset label only)
     const g=el('g',{class:'mk'+(s.opt?' opt':''),'data-i':i},gMarkers);
     const pin=el('g',{class:'pin'},g);
-    el('circle',{class:'halo',r:12},pin);el('circle',{class:'dot',r:11},pin);
+    el('circle',{class:'halo',r:12},pin);el('circle',{class:'shd',r:11},pin);el('circle',{class:'dot',r:11},pin);
     const t=el('text',{class:'num'},pin);t.textContent=num;
     const lg=el('g',{class:'lbl'},pin);const rr=el('rect',{x:16,y:-12,height:24,rx:7},lg);const lt=el('text',{x:25,y:0},lg);lt.textContent=s.i+' '+s.n;
     const o=addScaled(g,s.ll);scaled[scaled.length-1].dyn=true;
@@ -855,7 +857,6 @@ function solar(dateISO,m){const [y,mo,d]=dateISO.split('-').map(Number);const t=
 // sol y luna como objetos del mapa (quedan fijos en su lugar geográfico)
 const gSky=document.createElementNS(NS,'g');svg.insertBefore(gSky,gLabels);
 const defs=el('defs',{},svg);const rg=el('radialGradient',{id:'sunG'},defs);
-const shFilt=el('filter',{id:'sunShadow',x:'-50%',y:'-50%',width:'200%',height:'200%'},defs);const shF=el('feDropShadow',{dx:0,dy:0,stdDeviation:1,'flood-color':'#2a1c0f','flood-opacity':0},shFilt);gMarkers.setAttribute('filter','url(#sunShadow)');gWalker.setAttribute('filter','url(#sunShadow)');gDist.setAttribute('filter','url(#sunShadow)');
 const st1=el('stop',{offset:'0%'},rg),st2=el('stop',{offset:'24%'},rg),st3=el('stop',{offset:'48%'},rg);el('stop',{offset:'72%','stop-color':'#ffb45a','stop-opacity':'0'},rg);
 const sunG=el('g',{class:'sunobj'},gSky);const sunRays=el('g',{class:'rays'},sunG);
 for(let k=0;k<18;k++){const an=k*20*Math.PI/180;el('path',{d:`M${Math.cos(an-0.06)*46},${Math.sin(an-0.06)*46}L${Math.cos(an)*92},${Math.sin(an)*92}L${Math.cos(an+0.06)*46},${Math.sin(an+0.06)*46}Z`,fill:'#ffe48a',opacity:'.55'},sunRays);}
@@ -875,7 +876,7 @@ function lightDir(sx,sy,r){const cx=r.width/2,cy=r.height/2;let dx=sx-cx,dy=sy-c
  const ang=Math.atan2(-dx,dy)*180/Math.PI;// gradiente que va desde el lado del sol hacia el opuesto
  const warm=sunAlt<7?'255,170,90':'255,236,170';
  lightEl.style.background=`linear-gradient(${ang}deg,rgba(${warm},${(.40*inten).toFixed(3)}) 0%,rgba(${warm},${(.14*inten).toFixed(3)}) 32%,rgba(0,0,0,0) 55%,rgba(40,30,70,${(.15*inten).toFixed(3)}) 100%)`;
- const len=(3.5+(1-a)*9)*inten;shF.setAttribute('dx',(-dx*len*S).toFixed(3));shF.setAttribute('dy',(-dy*len*S).toFixed(3));shF.setAttribute('stdDeviation',(1.1*S).toFixed(3));shF.setAttribute('flood-opacity',(.45*inten).toFixed(2));}
+ const len=(3.5+(1-a)*9)*inten;svg.style.setProperty('--shx',(-dx*len).toFixed(1)+'px');svg.style.setProperty('--shy',(-dy*len).toFixed(1)+'px');svg.style.setProperty('--sha',(.32*inten).toFixed(2));}
 function applyTime(m){curMin=m;const [c1,c2,c3]=skyAt(m);skyEl.style.background=`linear-gradient(180deg,${c1} 0%,${c2} 55%,${c3} 100%)`;
   const sp=solar(curDate,m);sunAlt=sp.alt;const a=Math.max(0,Math.min(1,sp.alt/26));
   // dirección real (acimut) y distancia: más lejos cuanto más bajo está el sol
@@ -981,7 +982,7 @@ function renderWeek(){
  sheetBar.innerHTML=`<b class="bullet" style="--tc:#FFCE36">NY</b><div class="sb-t"><small>${profile==='chus'?'3 días':'5 días y medio'}</small><span>Toda la semana</span></div>`;panel.scrollTop=0;reveal();}
 function buildWeek(){clearMap();setColor('#ffd166');
  DAYS.forEach(d=>{let prev=null;d.stops.forEach(s=>{if(!s.ll)return;if(prev&&!s.opt){const p=el('path',{d:line([prev,...(s.via||[]),s.ll]),class:'leg '+(s.m||'walk')+' dim',style:`--dc:${d.color}`},gRoutes);}prev=s.ll;});
-  d.stops.forEach(s=>{if(!s.ll||s.opt)return;const g=el('g',{class:'ov-dot',style:`--dc:${d.color}`},gMarkers);el('circle',{r:5.5},g);const tt=el('title',{},g);tt.textContent=`${d.tab} · ${s.n}`;addScaled(g,s.ll);scaled[scaled.length-1].dyn=true;g.addEventListener('click',()=>{if(!moved)go(d.id)});});});
+  d.stops.forEach(s=>{if(!s.ll||s.opt)return;const g=el('g',{class:'ov-dot',style:`--dc:${d.color}`},gMarkers);el('circle',{class:'shd',r:5.5},g);el('circle',{r:5.5},g);const tt=el('title',{},g);tt.textContent=`${d.tab} · ${s.n}`;addScaled(g,s.ll);scaled[scaled.length-1].dyn=true;g.addEventListener('click',()=>{if(!moved)go(d.id)});});});
  updateScale();}
 
 // ---------- SEARCH ----------
