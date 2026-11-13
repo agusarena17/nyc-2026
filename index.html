@@ -34,7 +34,7 @@ header{padding:16px 18px 10px;background:linear-gradient(180deg,#121214,#0a0b10)
 .pcard span{font-size:64px;line-height:1}
 .pcard b{font:400 24px 'Bungee',sans-serif}
 .pcard small{color:#9aa6c4;font-size:13px}
-@media (max-width:520px){.pcards{grid-template-columns:1fr}.pcard span{font-size:44px}}
+@media (max-width:520px){.pcards{grid-template-columns:1fr;gap:26px}.pcard span{font-size:44px}}
 .brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .search{position:relative;margin-left:auto;width:min(340px,100%);z-index:20}
 .search input{width:100%;background:#1a1a20;border:1px solid #33333d;color:#fff;border-radius:999px;padding:9px 14px;font:600 14px 'Archivo',sans-serif;font-stretch:90%;outline:none;transition:.2s}
@@ -315,6 +315,8 @@ aside{background:var(--bg);border-left:1.5px solid var(--line)}
 .pcard:hover{transform:rotate(0) translateY(-6px);border-color:var(--teal);box-shadow:0 10px 0 var(--teal)}
 .pcard b{font:400 26px var(--disp);color:var(--brown)}
 .pcard small{color:var(--muted)}
+.pcard.last:after{content:'la última vez';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--mustard);color:var(--forest);font:700 11px var(--body);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pcard{position:relative}
 /* map labels + markers */
 .water-lbl{font:400 15px var(--hand);font-stretch:100%;letter-spacing:.05em}
 .boro-lbl{font:400 12px var(--disp);letter-spacing:.25em}
@@ -982,9 +984,9 @@ function snow(){const r=rect();cx.clearRect(0,0,r.width,r.height);
 // ---------- INIT ----------
 setVB(aspectFix({x:0,y:0,w:W,h:H}));resizeSnow();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)snow();
 const start=location.hash.slice(1);let saved=null;try{saved=localStorage.getItem('nyc-profile')}catch(e){}
-if(PROFILES[start])setProfile(start);else if(PROFILES[saved])setProfile(saved,start);else{DAYS=ALL_DAYS;buildTabs();go('semana');document.getElementById('picker').classList.add('on');}
+const pendingDay=PROFILES[start]?null:start;DAYS=ALL_DAYS;buildTabs();go('semana');document.querySelectorAll('.pcard').forEach(c=>c.classList.toggle('last',c.dataset.p===(PROFILES[start]?start:saved)));document.getElementById('picker').classList.add('on');
 document.getElementById('who').onclick=()=>document.getElementById('picker').classList.add('on');
-document.querySelectorAll('.pcard').forEach(c=>c.onclick=()=>setProfile(c.dataset.p));
+document.querySelectorAll('.pcard').forEach(c=>c.onclick=()=>setProfile(c.dataset.p,pendingDay));
 if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.hostname)){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
