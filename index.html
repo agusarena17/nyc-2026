@@ -128,6 +128,8 @@ aside{background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;
 .leg.tram{stroke:#ff7eb6;stroke-width:calc(3px*var(--s));stroke-dasharray:calc(1px*var(--s)) calc(5px*var(--s))}
 .leg.ferry{stroke:var(--fer);stroke-width:calc(3px*var(--s));stroke-dasharray:calc(2px*var(--s)) calc(7px*var(--s))}
 .leg.glow{stroke-width:calc(11px*var(--s));opacity:.22;filter:blur(calc(3px*var(--s)))}
+.t-dusk .leg.glow{stroke:var(--case);stroke-width:calc(7px*var(--s));opacity:.35;filter:none}
+.t-dusk .dist rect{fill:#fff8eeee;stroke:#8a6650}.t-dusk .dist text{fill:#4a2f22}
 .t-day .leg.glow{stroke:var(--case);stroke-width:calc(7px*var(--s));opacity:.45;filter:none}
 .t-day .ov-dot circle,.t-day .mk .dot{stroke:#1b2440}
 .leg.dim{opacity:.55}
@@ -333,8 +335,8 @@ aside{background:var(--bg);border-left:1.5px solid var(--line)}
 .alti b{font-family:var(--disp);color:var(--teal)}
 /* paleta del mapa */
 #mapwrap{--land:#13201f;--landS:#24403c;--manh:#1a2e2b;--manhS:#2f5550;--park:#1f4436;--parkS:#2c6b53;--res:#123c3a;--street:#2a4844;--bridge:#9fc9c2;--wl:#78a19d;--bl:#8fb5b0;--hl:#cfe9e5;--sub:#DBFFFB;--fer:#7fe3d8}
-#mapwrap.t-day{--land:#F3F1D6;--landS:#d9d4ae;--manh:#FEFFEB;--manhS:#c9c39a;--park:#CFE6AE;--parkS:#9cc77a;--res:#BFE9E2;--street:#E8E2C4;--bridge:#8c8a74;--wl:#2C7A72;--bl:#8a7f58;--hl:#6b6346;--sub:#393D29;--fer:#006D64;--case:#393D29}
-#mapwrap.t-dusk{--land:#5b4a3a;--landS:#7c6650;--manh:#6b5844;--manhS:#9a7d5c;--park:#5d6e46;--parkS:#7a8d5c;--res:#c07a5a;--street:#8b7158;--bridge:#ffd98a;--wl:#ffe2b0;--bl:#ffd9b8;--hl:#fff0d8;--sub:#fff4e0;--fer:#bff5ee;--case:#2a1d12}
+#mapwrap.t-day{--land:#F2EFD3;--landS:#d6cfa8;--manh:#FEFFEF;--manhS:#c7bf95;--park:#C8E3A4;--parkS:#93c06f;--res:#A9DCE3;--street:#E6DFC0;--bridge:#8c8a74;--wl:#2C7A72;--bl:#8a7f58;--hl:#6b6346;--sub:#393D29;--fer:#006D64;--case:#393D29}
+#mapwrap.t-dusk{--land:#F1D7B5;--landS:#d7ae84;--manh:#FAE3C6;--manhS:#d2a375;--park:#BCCB8E;--parkS:#94a466;--res:#E8B4B0;--street:#EBCBA6;--bridge:#8a6650;--wl:#8a4766;--bl:#8f5a42;--hl:#6e4632;--sub:#4a2a38;--fer:#7a3f6a;--case:#4a2f22;--lights:.35}
 /* cinta manuscrita */
 .marquee{overflow:hidden;background:var(--forest);border-radius:22px;margin:0 0 18px;padding:10px 0;position:relative}
 .marquee div{display:inline-block;white-space:nowrap;font:400 30px var(--hand);color:var(--mint);animation:mq 26s linear infinite;padding-left:100%}
@@ -420,6 +422,11 @@ aside{display:flex;flex-direction:column;overflow:hidden;padding:0!important}
  .ptitle{font-size:30px}
  .pcard{padding:20px 14px}
 }
+
+.sunobj,.moonobj{pointer-events:none;transition:opacity 1.2s}
+.rays{transform-box:fill-box;transform-origin:center;animation:spin 70s linear infinite;transition:opacity 1.5s}
+.t-dusk .sunobj circle,#mapwrap:not(.t-day):not(.t-dusk) .sunobj circle{mix-blend-mode:screen}
+.sunedge{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .6s;background:radial-gradient(circle,var(--ec,#ffd27a) 0%,rgba(255,200,90,.35) 30%,rgba(255,190,90,0) 68%)}
 </style>
 </head>
 <body>
@@ -434,7 +441,7 @@ aside{display:flex;flex-direction:column;overflow:hidden;padding:0!important}
     <div id="mapwrap">
       <div class="skyfx" id="sky"></div>
       <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="tint" id="tint"></div><div class="sun" id="sun"><i></i></div><div class="moon" id="moon"></div><div id="fx"></div>
+      <div class="tint" id="tint"></div><div class="sunedge" id="sunedge"></div><div id="fx"></div>
       <div class="tod" id="tod">☀️ Día</div>
       <canvas id="snow"></canvas>
       <div class="ctrls">
@@ -703,7 +710,7 @@ const wrap=document.getElementById('mapwrap');
 let vb={x:0,y:0,w:W,h:H},S=1;
 function rect(){return wrap.getBoundingClientRect();}
 function setVB(v){vb=v;svg.setAttribute('viewBox',`${v.x} ${v.y} ${v.w} ${v.h}`);updateScale();}
-function updateScale(){const r=rect();S=vb.w/Math.max(1,r.width);svg.style.setProperty('--s',S);
+function updateScale(){const r=rect();S=vb.w/Math.max(1,r.width);svg.style.setProperty('--s',S);if(typeof placeSky==='function')placeSky();
  for(const s of scaled)s.node.setAttribute('transform',`translate(${s.x.toFixed(2)},${s.y.toFixed(2)}) scale(${S.toFixed(4)})${s.r?` rotate(${s.r})`:''}`);
  svg.classList.toggle('hoods-off',S>0.5);
  for(const l of legEls){if(l&&l.lab)l.lab.classList.toggle('tiny',l.L/S<(l.lab._w||80)+30);}
@@ -831,25 +838,50 @@ const RISE=435,SET=990; // 7:15 / 16:30 (diciembre)
 const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
 const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
 const mix=(a,b,k)=>{const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*k)).join(',')+')';};
-const SKY=[[0,'#0b1715','#10221f','#152826'],[400,'#0b1715','#10221f','#152826'],[440,'#3d4a5a','#e28a6e','#FFCE36'],[520,'#9fe0d8','#c4efe9','#E9FBF8'],[900,'#9fe0d8','#c4efe9','#E9FBF8'],[985,'#4a3f5e','#e0745f','#FFCE36'],[1035,'#0b1715','#10221f','#152826'],[1440,'#0b1715','#10221f','#152826']];
+const SKY=[[0,'#0b1715','#10221f','#152826'],[395,'#0b1715','#10221f','#152826'],[436,'#c9a6c8','#efb3a6','#f7d3a2'],[490,'#a7d9e3','#bfe6ea','#d9f3f1'],[920,'#a7d9e3','#bfe6ea','#d9f3f1'],[990,'#d9a2b6','#eeae9c','#f6cf98'],[1030,'#2a3a52','#3c3550','#152826'],[1060,'#0b1715','#10221f','#152826'],[1440,'#0b1715','#10221f','#152826']];
 function skyAt(m){for(let i=0;i<SKY.length-1;i++){const a=SKY[i],b=SKY[i+1];if(m>=a[0]&&m<=b[0]){const k=(m-a[0])/Math.max(1,b[0]-a[0]);return [1,2,3].map(j=>mix(a[j],b[j],k));}}return SKY[0].slice(1);}
 let curMin=600,theme=null,timeRaf=0;
-const skyEl=document.getElementById('sky'),sunEl=document.getElementById('sun'),moonEl=document.getElementById('moon');
+const skyEl=document.getElementById('sky');
+// posición real del sol en Nueva York (fórmulas solares simplificadas)
+const NYC=[40.754,-73.984];let curDate='2026-12-18';
+function solar(dateISO,m){const [y,mo,d]=dateISO.split('-').map(Number);const t=Date.UTC(y,mo-1,d,0,0)+(m+300)*60000;const n=(t-946728000000)/864e5;const rad=Math.PI/180;
+ const L=(280.460+0.9856474*n)%360,g=(357.528+0.9856003*n)*rad;const lam=(L+1.915*Math.sin(g)+0.020*Math.sin(2*g))*rad,eps=(23.439-4e-7*n)*rad;
+ const ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam)),dec=Math.asin(Math.sin(eps)*Math.sin(lam));
+ const gmst=((18.697374558+24.06570982441908*n)%24+24)%24;const H=(gmst*15+NYC[1])*rad-ra,phi=NYC[0]*rad;
+ const alt=Math.asin(Math.sin(phi)*Math.sin(dec)+Math.cos(phi)*Math.cos(dec)*Math.cos(H));
+ const az=(Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(phi)-Math.tan(dec)*Math.cos(phi))/rad+180+360)%360;return {alt:alt/rad,az};}
+// sol y luna como objetos del mapa (quedan fijos en su lugar geográfico)
+const gSky=document.createElementNS(NS,'g');svg.insertBefore(gSky,gLabels);
+const defs=el('defs',{},svg);const rg=el('radialGradient',{id:'sunG'},defs);
+const st1=el('stop',{offset:'0%'},rg),st2=el('stop',{offset:'24%'},rg),st3=el('stop',{offset:'48%'},rg);el('stop',{offset:'72%','stop-color':'#ffb45a','stop-opacity':'0'},rg);
+const sunG=el('g',{class:'sunobj'},gSky);const sunRays=el('g',{class:'rays'},sunG);
+for(let k=0;k<18;k++){const an=k*20*Math.PI/180;el('path',{d:`M${Math.cos(an-0.06)*46},${Math.sin(an-0.06)*46}L${Math.cos(an)*92},${Math.sin(an)*92}L${Math.cos(an+0.06)*46},${Math.sin(an+0.06)*46}Z`,fill:'#ffe48a',opacity:'.55'},sunRays);}
+el('circle',{r:95,fill:'url(#sunG)'},sunG);
+const moonG=el('g',{class:'moonobj'},gSky);el('circle',{r:30,fill:'#f4f1e1',opacity:'.18'},moonG);const mt=el('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':'34'},moonG);mt.textContent='🌙';
+let sunXY=[0,0],sunAlt=-90,moonXY=[0,0],moonVis=0;
+const edgeEl=document.getElementById('sunedge');
+function placeSky(){sunG.setAttribute('transform',`translate(${sunXY[0].toFixed(1)},${sunXY[1].toFixed(1)}) scale(${(S*sunScale).toFixed(4)})`);moonG.setAttribute('transform',`translate(${moonXY[0].toFixed(1)},${moonXY[1].toFixed(1)}) scale(${S.toFixed(4)})`);
+ // si el sol queda fuera de la vista, un resplandor en el borde indica de qué lado está
+ const r=rect();const sx=(sunXY[0]-vb.x)/S,sy=(sunXY[1]-vb.y)/S;const out=sx<-40||sy<-40||sx>r.width+40||sy>r.height+40;
+ if(out&&sunAlt>-4){const cx=r.width/2,cy=r.height/2;const dx=sx-cx,dy=sy-cy;const k=Math.min(Math.abs(cx/(dx||1e-6)),Math.abs(cy/(dy||1e-6)));edgeEl.style.left=(cx+dx*k)+'px';edgeEl.style.top=(cy+dy*k)+'px';edgeEl.style.opacity=Math.min(1,(sunAlt+4)/8)*.9;}else edgeEl.style.opacity=0;}
+let sunScale=1;
 function applyTime(m){curMin=m;const [c1,c2,c3]=skyAt(m);skyEl.style.background=`linear-gradient(180deg,${c1} 0%,${c2} 55%,${c3} 100%)`;
-  const p=(m-RISE)/(SET-RISE);const alt=Math.sin(Math.PI*Math.max(-.15,Math.min(1.15,p)));
-  // sale por el este (derecha), se pone por el oeste (izquierda)
-  const x=88-76*Math.max(-.1,Math.min(1.1,p)),y=82-62*alt;
-  sunEl.style.left=x+'%';sunEl.style.top=y+'%';
-  const a=Math.max(0,alt);sunEl.style.opacity=p<-.12||p>1.12?0:Math.min(1,(alt+.2)*2.5);
-  sunEl.style.setProperty('--sc1',mix('#ffd9a0','#fffbe6',Math.min(1,a*1.6)));
-  sunEl.style.setProperty('--sc2',mix('#ff5a36','#ffe680',Math.min(1,a*1.4)));
-  sunEl.style.setProperty('--sc3',mix('#ff3d5a','#ffcf5a',Math.min(1,a*1.4)));
-  sunEl.style.setProperty('--ss',(1.6-a*.7).toFixed(2));
-  const dz=Math.max(0,1-Math.min(Math.abs(m-SET),Math.abs(m-RISE))/55);document.getElementById('tint').style.background=`linear-gradient(200deg,rgba(255,130,70,${(dz*.28).toFixed(3)}) 0%,rgba(200,70,120,${(dz*.18).toFixed(3)}) 50%,rgba(90,60,170,${(dz*.2).toFixed(3)}) 100%)`;
-  // luna: sale por el este cuando oscurece
-  const q=(m-SET-20)/360;moonEl.style.opacity=q<0?0:Math.min(.95,q*4);moonEl.style.left=(86-30*Math.max(0,q))+'%';moonEl.style.top=(70-50*Math.min(1,Math.max(0,q)*1.4))+'%';
-  const th=(m>=480&&m<930)?'day':((m>=420&&m<480)||(m>=930&&m<1020))?'dusk':'night';
+  const sp=solar(curDate,m);sunAlt=sp.alt;const a=Math.max(0,Math.min(1,sp.alt/26));
+  // dirección real (acimut) y distancia: más lejos cuanto más bajo está el sol
+  const C=P([40.742,-73.985]);const Rkm=4.5+7*(1-a);const Ru=Rkm*45;const az=sp.az*Math.PI/180;
+  sunXY=[C[0]+Math.sin(az)*Ru/CS*CS,C[1]-Math.cos(az)*Ru];
+  sunG.style.opacity=sp.alt<-3?0:Math.min(1,(sp.alt+3)/6);
+  st1.setAttribute('stop-color',mix('#ffd9a0','#fffbe6',Math.min(1,a*1.6)));st2.setAttribute('stop-color',mix('#ff6a3a','#ffe680',Math.min(1,a*1.4)));st3.setAttribute('stop-color',mix('#ff4d6a','#ffcf5a',Math.min(1,a*1.4)));
+  sunRays.style.opacity=Math.max(0,(a-.25)/.4);sunScale=1.45-a*.55;
+  edgeEl.style.setProperty('--ec',mix('#ff7a4a','#ffe27a',a));
+  // luna: sale por el este-noreste al anochecer y sube hacia el sureste
+  const q=Math.max(0,(m-1010)/360);moonVis=sp.alt<-4?Math.min(1,(-4-sp.alt)/6):0;const maz=(75+70*Math.min(1,q))*Math.PI/180;const mR=(10-4*Math.min(1,q))*45;
+  moonXY=[C[0]+Math.sin(maz)*mR,C[1]-Math.cos(maz)*mR];moonG.style.opacity=moonVis;
+  // tema según la altura del sol (día / hora dorada / noche)
+  const th=sp.alt>7?'day':sp.alt>-6?'dusk':'night';
   if(th!==theme){theme=th;wrap.classList.toggle('t-day',th==='day');wrap.classList.toggle('t-dusk',th==='dusk');}
+  const dz=sp.alt>-7?Math.max(0,1-Math.abs(sp.alt-1)/9):0;document.getElementById('tint').style.background=`linear-gradient(${sp.az>180?'250deg':'110deg'},rgba(255,150,80,${(dz*.16).toFixed(3)}) 0%,rgba(240,120,140,${(dz*.08).toFixed(3)}) 55%,transparent 100%)`;
+  placeSky();
   const hh=Math.floor(m/60),mm=Math.round(m%60/5)*5%60;const lab=th==='day'?'☀️ Día':th==='dusk'?(m<720?'🌅 Amanecer':'🌇 Atardecer'):'🌙 Noche';
   document.getElementById('tod').textContent=`${lab} · ${hh}:${String(mm).padStart(2,'0')}`;}
 function tweenTime(to,ms){cancelAnimationFrame(timeRaf);const from=curMin,t0=performance.now();ms=Math.max(1,ms);
@@ -963,8 +995,8 @@ function go(id,auto=true){if(location.hash!=='#'+id)history.replaceState(null,''
  tabs.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('on',t.dataset.id===id);if(t.dataset.id===id)t.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});});
  runId++;const d=DAYS.find(x=>x.id===id);
  document.getElementById('playBtn').style.display=d?'':'none';document.getElementById('allBtn').style.display=d?'':'none';document.getElementById('speedBtn').style.display=d?'':'none';
- if(!d){current=null;setFX(null);applyTime(720);buildWeek();renderWeek();setSheet('half');fitCurrent();return;}
- current=d;setFX(null);applyTime(toMin(d.stops[0].t));buildDay(d);renderDay(d);hideAll();if(!auto)setSheet('peek');if(auto)play();}
+ if(!d){current=null;curDate='2026-12-18';setFX(null);applyTime(720);buildWeek();renderWeek();setSheet('half');fitCurrent();return;}
+ current=d;curDate=TRIP[d.id]||curDate;setFX(null);applyTime(toMin(d.stops[0].t));buildDay(d);renderDay(d);hideAll();if(!auto)setSheet('peek');if(auto)play();}
 function openToday(){const td=todayDay();if(!td)return false;go(td.id,false);const k=nowIndex(td);setTimeout(()=>{if(k>=0){activate(k,false);}else{showAllStatic();fitCurrent();}applyTime(nyNow().min);},80);return true;}
 window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(PROFILES[id]){setProfile(id);return;}if(id&&(id==='semana'||DAYS.some(d=>d.id===id)))go(id);});
 document.getElementById('playBtn').onclick=()=>play();
@@ -977,7 +1009,7 @@ function resizeSnow(){const r=rect(),dpr=window.devicePixelRatio||1;cv.width=r.w
  flakes=Array.from({length:Math.round(r.width*r.height/9000)},()=>({x:Math.random()*r.width,y:Math.random()*r.height,r:.6+Math.random()*1.8,v:.25+Math.random()*.7,w:Math.random()*6.28}));}
 function snow(){const r=rect();cx.clearRect(0,0,r.width,r.height);
  if(snowMode==='magic'){for(const f of flakes){f.y-=f.v*.5;f.w+=.03;f.x+=Math.sin(f.w)*.5;if(f.y<-6){f.y=r.height+4;f.x=Math.random()*r.width}const tw=.5+.5*Math.sin(f.w*3);cx.globalAlpha=.3+.7*tw;cx.fillStyle=f.r>1.6?'#fff3c4':'#ffcf5a';cx.beginPath();cx.arc(f.x,f.y,f.r*(.6+tw*.8),0,6.28);cx.fill();if(f.r>2){cx.fillRect(f.x-f.r*2.5,f.y-.4,f.r*5,.8);cx.fillRect(f.x-.4,f.y-f.r*2.5,.8,f.r*5);}}}
- else{cx.fillStyle=theme==='day'?'rgba(120,150,190,.55)':'rgba(255,255,255,.75)';
+ else{cx.fillStyle=theme==='day'?'rgba(140,170,200,.35)':theme==='dusk'?'rgba(255,255,255,.6)':'rgba(255,255,255,.75)';
  for(const f of flakes){f.y+=f.v*.7;f.w+=.008;f.x+=Math.sin(f.w)*.3;if(f.y>r.height){f.y=-4;f.x=Math.random()*r.width}cx.beginPath();cx.globalAlpha=.35+f.r/4;cx.arc(f.x,f.y,f.r,0,6.28);cx.fill();}}
  cx.globalAlpha=1;requestAnimationFrame(snow);}
 
