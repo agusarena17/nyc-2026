@@ -427,6 +427,8 @@ aside{display:flex;flex-direction:column;overflow:hidden;padding:0!important}
 .rays{transform-box:fill-box;transform-origin:center;animation:spin 70s linear infinite;transition:opacity 1.5s}
 .t-dusk .sunobj circle,#mapwrap:not(.t-day):not(.t-dusk) .sunobj circle{mix-blend-mode:screen}
 .sunedge{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .6s;background:radial-gradient(circle,var(--ec,#ffd27a) 0%,rgba(255,200,90,.35) 30%,rgba(255,190,90,0) 68%)}
+
+.sunlight{position:absolute;inset:0;pointer-events:none;z-index:1;transition:background .6s}
 </style>
 </head>
 <body>
@@ -434,14 +436,14 @@ aside{display:flex;flex-direction:column;overflow:hidden;padding:0!important}
   <div class="pcards"><button class="pcard" data-p="pipis"><span>💑</span><b>Pipis</b><small>Los 5 días y medio completos</small></button><button class="pcard" data-p="chus"><span>👨‍👩‍👧</span><b>Chus</b><small>Viernes a domingo, con la nena</small></button></div></div></div>
 <div id="app">
   <header>
-    <div class="brand"><h1><span>NUEVA YORK</span> · NUESTRO VIAJE</h1><small>18 → 23 dic · base: POD Times Square</small><button class="iconbtn" id="sbtn" aria-label="Buscar">🔍</button><div class="search" id="search"><button class="iconbtn sclose" id="sclose" aria-label="Cerrar búsqueda">✕</button><input id="q" type="search" placeholder="🔍 Buscar atracción, barrio o comida…" autocomplete="off"><div class="res" id="res"></div></div></div>
+    <div class="brand"><h1><span>NUEVA YORK</span></h1><small>18 → 23 dic · base: POD Times Square</small><button class="iconbtn" id="sbtn" aria-label="Buscar">🔍</button><div class="search" id="search"><button class="iconbtn sclose" id="sclose" aria-label="Cerrar búsqueda">✕</button><input id="q" type="search" placeholder="🔍 Buscar atracción, barrio o comida…" autocomplete="off"><div class="res" id="res"></div></div></div>
     <div class="tabrow"><nav class="tabs" id="tabs"></nav><button class="who" id="who"></button></div>
   </header>
   <main>
     <div id="mapwrap">
       <div class="skyfx" id="sky"></div>
       <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="tint" id="tint"></div><div class="sunedge" id="sunedge"></div><div id="fx"></div>
+      <div class="tint" id="tint"></div><div class="sunlight" id="sunlight"></div><div class="sunedge" id="sunedge"></div><div id="fx"></div>
       <div class="tod" id="tod">☀️ Día</div>
       <canvas id="snow"></canvas>
       <div class="ctrls">
@@ -853,6 +855,7 @@ function solar(dateISO,m){const [y,mo,d]=dateISO.split('-').map(Number);const t=
 // sol y luna como objetos del mapa (quedan fijos en su lugar geográfico)
 const gSky=document.createElementNS(NS,'g');svg.insertBefore(gSky,gLabels);
 const defs=el('defs',{},svg);const rg=el('radialGradient',{id:'sunG'},defs);
+const shFilt=el('filter',{id:'sunShadow',x:'-50%',y:'-50%',width:'200%',height:'200%'},defs);const shF=el('feDropShadow',{dx:0,dy:0,stdDeviation:1,'flood-color':'#2a1c0f','flood-opacity':0},shFilt);gMarkers.setAttribute('filter','url(#sunShadow)');gWalker.setAttribute('filter','url(#sunShadow)');gDist.setAttribute('filter','url(#sunShadow)');
 const st1=el('stop',{offset:'0%'},rg),st2=el('stop',{offset:'24%'},rg),st3=el('stop',{offset:'48%'},rg);el('stop',{offset:'72%','stop-color':'#ffb45a','stop-opacity':'0'},rg);
 const sunG=el('g',{class:'sunobj'},gSky);const sunRays=el('g',{class:'rays'},sunG);
 for(let k=0;k<18;k++){const an=k*20*Math.PI/180;el('path',{d:`M${Math.cos(an-0.06)*46},${Math.sin(an-0.06)*46}L${Math.cos(an)*92},${Math.sin(an)*92}L${Math.cos(an+0.06)*46},${Math.sin(an+0.06)*46}Z`,fill:'#ffe48a',opacity:'.55'},sunRays);}
@@ -863,8 +866,16 @@ const edgeEl=document.getElementById('sunedge');
 function placeSky(){sunG.setAttribute('transform',`translate(${sunXY[0].toFixed(1)},${sunXY[1].toFixed(1)}) scale(${(S*sunScale).toFixed(4)})`);moonG.setAttribute('transform',`translate(${moonXY[0].toFixed(1)},${moonXY[1].toFixed(1)}) scale(${S.toFixed(4)})`);
  // si el sol queda fuera de la vista, un resplandor en el borde indica de qué lado está
  const r=rect();const sx=(sunXY[0]-vb.x)/S,sy=(sunXY[1]-vb.y)/S;const out=sx<-40||sy<-40||sx>r.width+40||sy>r.height+40;
+ lightDir(sx,sy,r);
  if(out&&sunAlt>-4){const cx=r.width/2,cy=r.height/2;const dx=sx-cx,dy=sy-cy;const k=Math.min(Math.abs(cx/(dx||1e-6)),Math.abs(cy/(dy||1e-6)));edgeEl.style.left=(cx+dx*k)+'px';edgeEl.style.top=(cy+dy*k)+'px';edgeEl.style.opacity=Math.min(1,(sunAlt+4)/8)*.9;}else edgeEl.style.opacity=0;}
-let sunScale=1;
+let sunScale=1;const lightEl=document.getElementById('sunlight');
+// luz direccional: de qué lado viene el sol en la pantalla, sin importar el zoom
+function lightDir(sx,sy,r){const cx=r.width/2,cy=r.height/2;let dx=sx-cx,dy=sy-cy;const L=Math.hypot(dx,dy)||1;dx/=L;dy/=L;
+ const a=Math.max(0,Math.min(1,sunAlt/26)),inten=sunAlt<-2?0:Math.min(1,(sunAlt+2)/6);
+ const ang=Math.atan2(-dx,dy)*180/Math.PI;// gradiente que va desde el lado del sol hacia el opuesto
+ const warm=sunAlt<7?'255,170,90':'255,236,170';
+ lightEl.style.background=`linear-gradient(${ang}deg,rgba(${warm},${(.40*inten).toFixed(3)}) 0%,rgba(${warm},${(.14*inten).toFixed(3)}) 32%,rgba(0,0,0,0) 55%,rgba(40,30,70,${(.15*inten).toFixed(3)}) 100%)`;
+ const len=(3.5+(1-a)*9)*inten;shF.setAttribute('dx',(-dx*len*S).toFixed(3));shF.setAttribute('dy',(-dy*len*S).toFixed(3));shF.setAttribute('stdDeviation',(1.1*S).toFixed(3));shF.setAttribute('flood-opacity',(.45*inten).toFixed(2));}
 function applyTime(m){curMin=m;const [c1,c2,c3]=skyAt(m);skyEl.style.background=`linear-gradient(180deg,${c1} 0%,${c2} 55%,${c3} 100%)`;
   const sp=solar(curDate,m);sunAlt=sp.alt;const a=Math.max(0,Math.min(1,sp.alt/26));
   // dirección real (acimut) y distancia: más lejos cuanto más bajo está el sol
